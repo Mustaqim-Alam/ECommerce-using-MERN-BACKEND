@@ -1,0 +1,28 @@
+import { NextFunction, Request, Response } from "express";
+import { User } from "../models/User.js";
+import { newUserRequestBody } from "../types/Types.js";
+
+export const newUser = async (
+  req: Request<{}, {}, newUserRequestBody>,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { _id, name, email, dob, photo, gender, role } = req.body;
+
+    const user = await User.create({
+      _id,
+      name,
+      email,
+      dob,
+      photo,
+      gender,
+      role,
+    });
+
+    return res.status(200).json({
+      seccess: true,
+      message: `Welcome ${user.name}`,
+    });
+  } catch (error) {}
+};

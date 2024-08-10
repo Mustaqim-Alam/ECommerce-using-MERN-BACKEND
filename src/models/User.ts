@@ -1,6 +1,19 @@
 import mongoose, { Schema } from "mongoose";
 import valiator from "validator";
 
+interface IUser extends Document {
+  _id: string;
+  name: string;
+  email: string;
+  photo: string;
+  role: "admin" | "user";
+  gender: "male" | "female";
+  dob: Date;
+  age: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 const schema = new mongoose.Schema(
   {
     _id: {
@@ -46,8 +59,15 @@ schema.virtual("age").get(function () {
   const today = new Date();
   const dob = this.dob;
   let age = today.getFullYear() - dob.getFullYear();
+
+  if (
+    today.getMonth() < dob.getMonth() ||
+    (today.getMonth() === dob.getMonth() && today.getDate() < dob.getDate())
+  ) {
+    age--;
+  }
+  return age;
 });
 
-const user = mongoose.model("user", schema);
-
+export const User = mongoose.model<IUser>("User", schema);
 
