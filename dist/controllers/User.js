@@ -10,20 +10,24 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { User } from "../models/User.js";
 export const newUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { _id, name, email, dob, photo, gender, role } = req.body;
+        const { _id, name, email, dob, photo, gender } = req.body;
         const user = yield User.create({
             _id,
             name,
             email,
-            dob,
+            dob: new Date(dob),
             photo,
             gender,
-            role,
         });
         return res.status(200).json({
             seccess: true,
             message: `Welcome ${user.name}`,
         });
     }
-    catch (error) { }
+    catch (error) {
+        return res.status(200).json({
+            seccess: true,
+            message: error.message,
+        });
+    }
 });
