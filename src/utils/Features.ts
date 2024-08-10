@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 export const connectdb = () => {
   mongoose
     .connect("mongodb://localhost:27017", {
-      dbName: "ECoomerce_MERN",
+      dbName: "ECommerce_MERN",
     })
     .then((c) =>
       console.log(`DB connection established with ${c.connection.host}`)
