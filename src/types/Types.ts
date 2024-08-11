@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
+// Interface for the expected request body when creating a new user
 export interface newUserRequestBody {
   _id: string;
   name: string;
@@ -13,6 +14,7 @@ export interface newUserRequestBody {
   updatedAt: Date;
 }
 
+// Type definition for controller functions
 export type ControllerType = (
   req: Request,
   res: Response,

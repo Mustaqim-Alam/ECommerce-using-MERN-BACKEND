@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import valiator from "validator";
+import validator from "validator";
 const schema = new mongoose.Schema({
     _id: {
         type: String,
@@ -13,7 +13,7 @@ const schema = new mongoose.Schema({
         type: String,
         required: [true, "Please enter email"],
         unique: [true, "Email already exists"],
-        validator: valiator.isEmail,
+        validate: [validator.isEmail, "Email already exists"],
     },
     photo: {
         type: String,

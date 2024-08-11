@@ -8,7 +8,9 @@ export const errorMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
+  // Set default error message if not provided
   err.message ||= "Some internal error occurred!";
+  // Set default status code if not provided
   err.statusCode ||= 500;
   res.status(err.statusCode).json({
     success: false,
@@ -16,8 +18,9 @@ export const errorMiddleware = (
   });
 };
 
+// Utility function to wrap async controller functions for error handling
 export const tryCatch =
   (func: ControllerType) =>
   (req: Request, res: Response, next: NextFunction) => {
-    return Promise.resolve(func(req, res, next));
+    return Promise.resolve(func(req, res, next)).catch(next);
   };

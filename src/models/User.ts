@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import valiator from "validator";
+import validator from "validator";
 
 interface IUser extends Document {
   _id: string;
@@ -28,7 +28,7 @@ const schema = new mongoose.Schema(
       type: String,
       required: [true, "Please enter email"],
       unique: [true, "Email already exists"],
-      validator: valiator.isEmail,
+      validate: [validator.isEmail, "Email already exists"],
     },
     photo: {
       type: String,
@@ -70,4 +70,3 @@ schema.virtual("age").get(function () {
 });
 
 export const User = mongoose.model<IUser>("User", schema);
-
