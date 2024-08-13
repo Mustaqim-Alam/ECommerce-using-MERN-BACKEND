@@ -21,9 +21,9 @@ const schema = new mongoose.Schema({
     },
     role: {
         type: String,
-        required: [true, "Please enter role"],
         enum: ["admin", "user"],
-        default: "user",
+        required: [true, "Please enter role"],
+        default: "user"
     },
     dob: {
         type: Date,
@@ -32,7 +32,7 @@ const schema = new mongoose.Schema({
     gender: {
         type: String,
         required: [true, "Please enter gender"],
-        enum: ["Male", "Female"],
+        enum: ["male", "female"],
     },
 }, {
     timestamps: true,

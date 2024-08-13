@@ -1,7 +1,7 @@
 import express from "express";
-import userRoute from "./routes/User.js";
-import { connectdb } from "./utils/Features.js";
-import { errorMiddleware } from "./middlewares/Error.js";
+import userRoute from "./Routes/user.js";
+import { connectdb } from "./Utils/features.js";
+import { errorMiddleware } from "./Middlewares/error.js";
 const app = express();
 //Database connection
 connectdb();

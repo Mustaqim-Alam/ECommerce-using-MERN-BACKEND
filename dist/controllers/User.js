@@ -7,13 +7,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { User } from "../models/User.js";
-import { tryCatch } from "../middlewares/Error.js";
-import ErrorHandler from "../utils/utilityClass.js";
+import { User } from "../Models/user.js";
+import { tryCatch } from "../Middlewares/error.js";
+import ErrorHandler from "../Utils/utilityClass.js";
 export const newUser = tryCatch((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     // throw new Error("Invalid user request");
     // Destructure necessary fields from the request body
-    const { _id, name, email, dob, photo, gender } = req.body;
+    const { _id, name, email, dob, photo, gender, role } = req.body;
     //Finding user by id in database
     let user = yield User.findById(_id);
     //Condition if user exists
@@ -28,7 +28,7 @@ export const newUser = tryCatch((req, res, next) => __awaiter(void 0, void 0, vo
     //   "success": true,
     //   "message": "Email allready exists"
     // })
-    if (!_id || !name || !email || !dob || !photo || !gender)
+    if (!_id || !name || !email || !dob || !photo || !gender || !role)
         return next(new Error("Please add all fields!"));
     //If user not exist
     // Create a new user document in the database using the User model
@@ -39,6 +39,7 @@ export const newUser = tryCatch((req, res, next) => __awaiter(void 0, void 0, vo
         dob: new Date(dob),
         photo,
         gender,
+        role
     });
     // Send a successful response with a welcome message
     return res.status(200).json({

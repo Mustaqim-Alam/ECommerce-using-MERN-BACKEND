@@ -1,8 +1,8 @@
 import express from "express";
-import userRoute from "./routes/User.js";
-import { connectdb } from "./utils/Features.js";
-import { errorMiddleware } from "./middlewares/Error.js";
-import { getAllUsers } from "./controllers/User.js";
+import userRoute from "./Routes/user.js";
+import { connectdb } from "./Utils/features.js";
+import { errorMiddleware } from "./Middlewares/error.js";
+import { getAllUsers } from "./Controllers/user.js";
 
 const app = express();
 

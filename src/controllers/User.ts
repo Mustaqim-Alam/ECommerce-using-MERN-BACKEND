@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
-import { User } from "../models/User.js";
-import { newUserRequestBody } from "../types/Types.js";
-import { tryCatch } from "../middlewares/Error.js";
-import ErrorHandler from "../utils/utilityClass.js";
+import { User } from "../Models/user.js";
+import { newUserRequestBody } from "../Types/types.js";
+import { tryCatch } from "../Middlewares/error.js";
+import ErrorHandler from "../Utils/utilityClass.js";
 
 export const newUser = tryCatch(
   async (
@@ -13,7 +13,7 @@ export const newUser = tryCatch(
     // throw new Error("Invalid user request");
 
     // Destructure necessary fields from the request body
-    const { _id, name, email, dob, photo, gender } = req.body;
+    const { _id, name, email, dob, photo, gender,role } = req.body;
 
     //Finding user by id in database
     let user = await User.findById(_id);
@@ -32,7 +32,7 @@ export const newUser = tryCatch(
     //   "message": "Email allready exists"
     // })
 
-    if (!_id || !name || !email || !dob || !photo || !gender)
+    if (!_id || !name || !email || !dob || !photo || !gender || !role)
       return next(new Error("Please add all fields!"));
 
     //If user not exist
@@ -44,6 +44,7 @@ export const newUser = tryCatch(
       dob: new Date(dob),
       photo,
       gender,
+      role
     });
 
     // Send a successful response with a welcome message
