@@ -16,6 +16,6 @@ app.post("/new", newUser);
 app.get("/all", adminOnly, getAllUsers);
 
 // Route - /api/v1/user/dynamicId
-app.route("/:id").get( getUserById).delete(adminOnly, deleteUserById);
+app.route("/:id").get(getUserById).delete(adminOnly, deleteUserById);
 
 export default app;
