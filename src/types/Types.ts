@@ -14,6 +14,14 @@ export interface newUserRequestBody {
   updatedAt: Date;
 }
 
+export interface newProductRequestBody {
+  _id: string;
+  name: string;
+  stock: string;
+  photo: string;
+  category: string;
+}
+
 // Type definition for controller functions
 export type ControllerType = (
   req: Request,

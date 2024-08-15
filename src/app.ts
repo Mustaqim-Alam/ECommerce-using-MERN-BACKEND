@@ -1,8 +1,8 @@
 import express from "express";
-import userRoute from "./Routes/user.js";
-import { connectdb } from "./Utils/features.js";
 import { errorMiddleware } from "./Middlewares/error.js";
-import { getAllUsers } from "./Controllers/user.js";
+import { connectdb } from "./Utils/features.js";
+import userRoute from "./Routes/user.js";
+import productRoute from "./Routes/products.js";
 
 const app = express();
 
@@ -21,6 +21,7 @@ app.get("/", (req, res) => {
 
 // Using routes
 app.use("/api/v1/user", userRoute);
+app.use("/api/v1/products", productRoute);
 
 // Custom Error Handling middleware
 app.use(errorMiddleware);

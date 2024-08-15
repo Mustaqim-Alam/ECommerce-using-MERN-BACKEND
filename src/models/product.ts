@@ -4,6 +4,10 @@ import path from "path";
 
 const schema = new mongoose.Schema(
   {
+    _id: {
+      type: "string",
+      required: [true, "Please enter ID"],
+    },
     name: {
       type: "string",
       required: [true, "Please enter product name"],
@@ -26,4 +30,4 @@ const schema = new mongoose.Schema(
   }
 );
 
-export const product = mongoose.model("Product", schema);
+export const Product = mongoose.model("Product", schema);
