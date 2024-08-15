@@ -24,6 +24,7 @@ app.use("/api/v1/user", userRoute);
 app.use("/api/v1/products", productRoute);
 
 // Custom Error Handling middleware
+app.use("/uploads", express.static("Uploads"));
 app.use(errorMiddleware);
 
 app.listen(port, () => {

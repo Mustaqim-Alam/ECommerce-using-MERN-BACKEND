@@ -19,6 +19,7 @@ const schema = new mongoose.Schema({
     category: {
         type: "string",
         required: [true, "Please enter product category"],
+        trim: true,
     },
 }, {
     timestamps: true,

@@ -1,6 +1,4 @@
-import { timeStamp } from "console";
 import mongoose from "mongoose";
-import path from "path";
 
 const schema = new mongoose.Schema(
   {
@@ -23,6 +21,7 @@ const schema = new mongoose.Schema(
     category: {
       type: "string",
       required: [true, "Please enter product category"],
+      trim: true,
     },
   },
   {

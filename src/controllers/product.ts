@@ -19,7 +19,7 @@ export const newProduct = tryCatch(
       category,
     });
 
-    res.status(200).json({
+    return res.status(201).json({
       success: true,
       message: `New Product ${newProduct.name} created successfully`,
     });
