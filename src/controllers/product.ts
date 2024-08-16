@@ -9,19 +9,29 @@ export const newProduct = tryCatch(
     res: Response,
     next: NextFunction
   ) => {
-    const { _id, name, stock, category } = req.body;
+    console.log("Hello");
+    
+    const {  name, stock, category, price } = req.body;
+    console.log(req.body);
+    console.log(req.file);
+    
     const photo = req.file;
 
-    const newProduct = await Product.create({
+
+    if (!name || !stock || !category || !photo || !price)
+      return next(new Error("Please add all fields!"));
+
+    await Product.create({
       name,
-      photo: photo?.path,
+      price,
+      photo: photo.path,
       stock,
-      category,
+      category: category.toLowerCase(),
     });
 
     return res.status(201).json({
       success: true,
-      message: `New Product ${newProduct.name} created successfully`,
+      message: `New Product ${name} created successfully`,
     });
   }
 );

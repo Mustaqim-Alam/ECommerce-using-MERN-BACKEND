@@ -15,11 +15,11 @@ export interface newUserRequestBody {
 }
 
 export interface newProductRequestBody {
-  _id: string;
-  name: string;
-  stock: string;
+ name: string;
+  stock: number;
   photo: string;
   category: string;
+  price: number;
 }
 
 // Type definition for controller functions

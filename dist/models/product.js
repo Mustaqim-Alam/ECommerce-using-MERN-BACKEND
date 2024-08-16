@@ -1,23 +1,23 @@
 import mongoose from "mongoose";
 const schema = new mongoose.Schema({
-    _id: {
-        type: "string",
-        required: [true, "Please enter ID"],
-    },
     name: {
-        type: "string",
+        type: String,
         required: [true, "Please enter product name"],
     },
     photo: {
-        type: "string",
+        type: String,
+        required: [true, "Please enter product photo"],
+    },
+    price: {
+        type: Number,
         required: [true, "Please enter product photo"],
     },
     stock: {
-        type: "string",
+        type: Number,
         required: [true, "Please enter stock details"],
     },
     category: {
-        type: "string",
+        type: String,
         required: [true, "Please enter product category"],
         trim: true,
     },

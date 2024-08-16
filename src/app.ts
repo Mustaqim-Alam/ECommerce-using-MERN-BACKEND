@@ -3,6 +3,7 @@ import { errorMiddleware } from "./Middlewares/error.js";
 import { connectdb } from "./Utils/features.js";
 import userRoute from "./Routes/user.js";
 import productRoute from "./Routes/products.js";
+import { singleUpload } from "./Middlewares/multer.js";
 
 const app = express();
 
@@ -24,7 +25,8 @@ app.use("/api/v1/user", userRoute);
 app.use("/api/v1/product", productRoute);
 
 // Custom Error Handling middleware
-app.use("/uploads", express.static("Uploads"));
+// app.use("/uploads", express.static("uploads"));
+
 app.use(errorMiddleware);
 
 app.listen(port, () => {
