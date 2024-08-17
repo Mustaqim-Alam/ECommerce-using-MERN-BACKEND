@@ -16,8 +16,8 @@ export const newProduct = tryCatch(
 
     const { name, stock, category, price } = req.body;
     const photo = req.file;
-    if (photo) console.log(photo.filename)
-      else console.log("Photo not found")
+    if (photo) console.log(photo.filename);
+    else console.log("Photo not found");
 
     if (!name || !stock || !category || !photo || !price)
       return next(new Error("Please add all fields!"));
@@ -32,7 +32,7 @@ export const newProduct = tryCatch(
 
     return res.status(201).json({
       success: true,
-      message: "New Product created successfully",
+      message: `New Product ${name} has created successfully`,
     });
   }
 );

@@ -30,6 +30,6 @@ export const newProduct = tryCatch((req, res, next) => __awaiter(void 0, void 0,
     });
     return res.status(201).json({
         success: true,
-        message: "New Product created successfully",
+        message: `New Product ${name} has created successfully`,
     });
 }));
