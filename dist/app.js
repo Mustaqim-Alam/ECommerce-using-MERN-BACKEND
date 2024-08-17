@@ -1,8 +1,8 @@
 import express from "express";
 import { errorMiddleware } from "./Middlewares/error.js";
-import { connectdb } from "./Utils/features.js";
-import userRoute from "./Routes/user.js";
 import productRoute from "./Routes/products.js";
+import userRoute from "./Routes/user.js";
+import { connectdb } from "./Utils/features.js";
 const app = express();
 //Database connection
 connectdb();
@@ -17,7 +17,7 @@ app.get("/", (req, res) => {
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/product", productRoute);
 // Custom Error Handling middleware
-// app.use("/uploads", express.static("uploads"));
+app.use("/uploads", express.static("uploads"));
 app.use(errorMiddleware);
 app.listen(port, () => {
     console.log("App is listening on http://localhost:" + port);

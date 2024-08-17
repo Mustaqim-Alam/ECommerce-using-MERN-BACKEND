@@ -1,8 +1,15 @@
 import mongoose from "mongoose";
 
+interface IProduct extends Document {
+  name: string;
+  photo: string;
+  price: number;
+  stock: number;
+  category: string;
+}
+
 const schema = new mongoose.Schema(
   {
-   
     name: {
       type: String,
       required: [true, "Please enter product name"],
@@ -13,7 +20,7 @@ const schema = new mongoose.Schema(
     },
     price: {
       type: Number,
-      required: [true, "Please enter product photo"],
+      required: [true, "Please enter product price"],
     },
     stock: {
       type: Number,
@@ -30,4 +37,4 @@ const schema = new mongoose.Schema(
   }
 );
 
-export const Product = mongoose.model("Product", schema);
+export const Product = mongoose.model<IProduct>("Product", schema);

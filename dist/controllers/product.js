@@ -10,22 +10,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { tryCatch } from "../Middlewares/error.js";
 import { Product } from "../Models/product.js";
 export const newProduct = tryCatch((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("Hello");
+    // console.log("Hello");
+    // console.log(req.body);
+    // console.log(req.file);
     const { name, stock, category, price } = req.body;
-    console.log(req.body);
-    console.log(req.file);
     const photo = req.file;
+    if (photo)
+        console.log(photo.filename);
+    else
+        console.log("Photo not found");
     if (!name || !stock || !category || !photo || !price)
         return next(new Error("Please add all fields!"));
     yield Product.create({
         name,
         price,
-        photo: photo.path,
         stock,
+        photo: photo === null || photo === void 0 ? void 0 : photo.path,
         category: category.toLowerCase(),
     });
     return res.status(201).json({
         success: true,
-        message: `New Product ${name} created successfully`,
+        message: "New Product created successfully",
     });
 }));

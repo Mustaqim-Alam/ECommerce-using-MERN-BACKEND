@@ -1,10 +1,15 @@
 import multer from "multer";
+import path from "path";
+// Define the storage strategy for Multer
 const storage = multer.diskStorage({
-    destination(req, file, callback) {
-        callback(null, "uploads");
+    destination: function (req, file, callback) {
+        // Set the destination folder to 'uploads' inside the 'src' directory
+        callback(null, path.join(process.cwd(), "src", "uploads"));
     },
-    filename(req, file, callback) {
-        callback(null, file.originalname);
+    filename: function (req, file, callback) {
+        // Keep the original file name
+        callback(null, file.fieldname);
     },
 });
+// Export the single file upload middleware
 export const singleUpload = multer({ storage }).single("photo");

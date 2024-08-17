@@ -9,14 +9,15 @@ export const newProduct = tryCatch(
     res: Response,
     next: NextFunction
   ) => {
-    console.log("Hello");
-    
-    const {  name, stock, category, price } = req.body;
-    console.log(req.body);
-    console.log(req.file);
-    
-    const photo = req.file;
+    // console.log("Hello");
 
+    // console.log(req.body);
+    // console.log(req.file);
+
+    const { name, stock, category, price } = req.body;
+    const photo = req.file;
+    if (photo) console.log(photo.filename)
+      else console.log("Photo not found")
 
     if (!name || !stock || !category || !photo || !price)
       return next(new Error("Please add all fields!"));
@@ -24,14 +25,14 @@ export const newProduct = tryCatch(
     await Product.create({
       name,
       price,
-      photo: photo.path,
       stock,
+      photo: photo?.path,
       category: category.toLowerCase(),
     });
 
     return res.status(201).json({
       success: true,
-      message: `New Product ${name} created successfully`,
+      message: "New Product created successfully",
     });
   }
 );
