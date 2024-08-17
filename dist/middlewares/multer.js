@@ -8,7 +8,7 @@ const storage = multer.diskStorage({
     },
     filename: function (req, file, callback) {
         // Keep the original file name
-        callback(null, file.fieldname);
+        callback(null, file.originalname);
     },
 });
 // Export the single file upload middleware

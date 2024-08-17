@@ -1,5 +1,6 @@
 import multer from "multer";
 import path from "path";
+import uuid from "uuid";
 
 // Define the storage strategy for Multer
 const storage = multer.diskStorage({
@@ -9,7 +10,9 @@ const storage = multer.diskStorage({
   },
   filename: function (req, file, callback) {
     // Keep the original file name
-    callback(null, file.fieldname);
+
+
+    callback(null, file.originalname);
   },
 });
 
