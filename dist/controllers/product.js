@@ -9,16 +9,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { tryCatch } from "../Middlewares/error.js";
 import { Product } from "../Models/product.js";
+import ErrorHandler from "../Utils/utilityClass.js";
 export const newProduct = tryCatch((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    // console.log("Hello");
-    // console.log(req.body);
-    // console.log(req.file);
     const { name, stock, category, price } = req.body;
     const photo = req.file;
-    if (photo)
-        console.log(photo.filename);
-    else
-        console.log("Photo not found");
+    if (!photo)
+        return next(new ErrorHandler("Please attach a photo", 400));
     if (!name || !stock || !category || !photo || !price)
         return next(new Error("Please add all fields!"));
     yield Product.create({

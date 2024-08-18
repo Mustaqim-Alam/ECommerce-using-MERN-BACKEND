@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { tryCatch } from "../Middlewares/error.js";
 import { Product } from "../Models/product.js";
 import { newProductRequestBody } from "../Types/types.js";
+import ErrorHandler from "../Utils/utilityClass.js";
 
 export const newProduct = tryCatch(
   async (
@@ -9,15 +10,9 @@ export const newProduct = tryCatch(
     res: Response,
     next: NextFunction
   ) => {
-    // console.log("Hello");
-
-    // console.log(req.body);
-    // console.log(req.file);
-
     const { name, stock, category, price } = req.body;
     const photo = req.file;
-    if (photo) console.log(photo.filename);
-    else console.log("Photo not found");
+    if (!photo) return next(new ErrorHandler("Please attach a photo", 400));
 
     if (!name || !stock || !category || !photo || !price)
       return next(new Error("Please add all fields!"));

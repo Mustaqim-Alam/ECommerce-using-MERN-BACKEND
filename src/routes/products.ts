@@ -6,4 +6,6 @@ const app = express.Router();
 
 app.post("/new", singleUpload, newProduct);
 
+app.post("/latest")
+
 export default app;
