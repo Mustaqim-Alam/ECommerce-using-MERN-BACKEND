@@ -44,3 +44,30 @@ export const getLatestProduct = tryCatch(async (req, res, next) => {
     products,
   });
 });
+
+export const getAllCategories = tryCatch(async (req, res, next) => {
+  const categories = await Product.distinct("category");
+
+  return res.status(200).json({
+    success: true,
+    categories,
+  });
+});
+
+export const getAdminProducts = tryCatch(async (req, res, next) => {
+  const adminProducts = await Product.find({});
+
+  return res.status(200).json({
+    success: true,
+    adminProducts,
+  });
+});
+
+export const getSingleProduct = tryCatch(async (req, res, next) => {
+  const product = await Product.findById(req.params.id);
+
+  return res.status(200).json({
+    success: true,
+    product,
+  });
+});

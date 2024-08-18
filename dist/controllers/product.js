@@ -41,3 +41,24 @@ export const getLatestProduct = tryCatch((req, res, next) => __awaiter(void 0, v
         products,
     });
 }));
+export const getAllCategories = tryCatch((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const categories = yield Product.distinct("category");
+    return res.status(200).json({
+        success: true,
+        categories,
+    });
+}));
+export const getAdminProducts = tryCatch((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const adminProducts = yield Product.find({});
+    return res.status(200).json({
+        success: true,
+        adminProducts,
+    });
+}));
+export const getSingleProduct = tryCatch((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const product = yield Product.findById(req.params.id);
+    return res.status(200).json({
+        success: true,
+        product,
+    });
+}));
