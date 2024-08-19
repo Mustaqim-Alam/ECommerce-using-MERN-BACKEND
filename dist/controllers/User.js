@@ -11,7 +11,6 @@ import { User } from "../Models/user.js";
 import { tryCatch } from "../Middlewares/error.js";
 import ErrorHandler from "../Utils/utilityClass.js";
 export const newUser = tryCatch((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    // throw new Error("Invalid user request");
     // Destructure necessary fields from the request body
     const { _id, name, email, dob, photo, gender, role } = req.body;
     //Finding user by id in database
@@ -23,11 +22,6 @@ export const newUser = tryCatch((req, res, next) => __awaiter(void 0, void 0, vo
             message: `Welcome ${user.name}`,
         });
     }
-    // let emailid = req.body.email;
-    // if (emailid) return res.status(400).json({
-    //   "success": true,
-    //   "message": "Email allready exists"
-    // })
     if (!_id || !name || !email || !dob || !photo || !gender || !role)
         return next(new Error("Please add all fields!"));
     //If user not exist

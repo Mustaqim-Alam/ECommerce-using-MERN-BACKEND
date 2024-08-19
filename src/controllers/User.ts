@@ -10,7 +10,6 @@ export const newUser = tryCatch(
     res: Response,
     next: NextFunction
   ) => {
-    // throw new Error("Invalid user request");
 
     // Destructure necessary fields from the request body
     const { _id, name, email, dob, photo, gender,role } = req.body;
@@ -26,11 +25,7 @@ export const newUser = tryCatch(
       });
     }
 
-    // let emailid = req.body.email;
-    // if (emailid) return res.status(400).json({
-    //   "success": true,
-    //   "message": "Email allready exists"
-    // })
+   
 
     if (!_id || !name || !email || !dob || !photo || !gender || !role)
       return next(new Error("Please add all fields!"));

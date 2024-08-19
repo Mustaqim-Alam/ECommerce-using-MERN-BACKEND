@@ -5,7 +5,7 @@ import { tryCatch } from "./error.js";
 // Middleware for accessing the admin interface
 export const adminOnly = tryCatch(async (req, res, next) => {
   const {id} = req.query;
-  if (!id) return next(new ErrorHandler("Please login to Admin", 401));
+  if (!id) return next(new ErrorHandler("Please login as Admin", 401));
 
   const user = await User.findById(id);
 

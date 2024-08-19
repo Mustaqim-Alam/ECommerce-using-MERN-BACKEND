@@ -14,7 +14,7 @@ import { tryCatch } from "./error.js";
 export const adminOnly = tryCatch((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.query;
     if (!id)
-        return next(new ErrorHandler("Please login to Admin", 401));
+        return next(new ErrorHandler("Please login as Admin", 401));
     const user = yield User.findById(id);
     if (!user)
         return next(new ErrorHandler("User not found in Admin", 401));
