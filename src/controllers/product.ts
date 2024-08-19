@@ -1,7 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import { tryCatch } from "../Middlewares/error.js";
 import { Product } from "../Models/product.js";
-import { newProductRequestBody } from "../Types/types.js";
+import {
+  BaseQuery,
+  newProductRequestBody,
+  searchRequestQuery,
+} from "../Types/types.js";
 import ErrorHandler from "../Utils/utilityClass.js";
 import { rm } from "fs";
 
@@ -135,3 +139,42 @@ export const deleteProduct = tryCatch(async (req, res, next) => {
     message: `Product ${product.name} deleted successfully!`,
   });
 });
+
+export const getAllProducts = tryCatch(
+  async (req: Request<{}, {}, {}, searchRequestQuery>, res, next) => {
+    const { search, category, price, sort } = req.query;
+
+    const page = Number(req.query.page) || 1;
+    const limit = Number(process.env.PRODUCT_PER_PAGE) || 8;
+
+    const skip = (page - 1) * limit;
+
+    const basequery: BaseQuery = {};
+
+    if (search) {
+      basequery.name = {
+        $regex: search,
+        $options: "i",
+      };
+    }
+
+    if (category) basequery.category = category;
+
+    if (price) {
+      basequery.price = {
+        $lte: Number(price),
+      };
+    }
+
+    const products = await Product.find(basequery)
+      .sort(sort && { price: sort === "asc" ? 1 : -1 })
+      .limit(limit)
+      .skip(skip);
+
+    const totalPages = Math.ceil(products.length / limit);
+
+    if (!products) return next(new ErrorHandler("Product not found", 404));
+
+    return res.status(200).json({ success: true, products, totalPages });
+  }
+);
