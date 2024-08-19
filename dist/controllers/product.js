@@ -62,3 +62,38 @@ export const getSingleProduct = tryCatch((req, res, next) => __awaiter(void 0, v
         product,
     });
 }));
+export const updateProduct = tryCatch((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const { name, stock, category, price } = req.body;
+    const photo = req.file;
+    if (!photo)
+        return next(new ErrorHandler("Please attach a photo", 400));
+    const product = yield Product.findById(id);
+    if (!product)
+        return next(new ErrorHandler("Invalid product", 400));
+    if (photo) {
+        rm(product.photo, () => {
+            console.log("Deleted");
+        });
+        product.photo = photo.path;
+    }
+    if (name)
+        product.name = name;
+    if (stock)
+        product.stock = stock;
+    if (category)
+        product.category = category;
+    if (price)
+        product.price = price;
+    yield Product.create({
+        name,
+        price,
+        stock,
+        photo: photo === null || photo === void 0 ? void 0 : photo.path,
+        category: category.toLowerCase(),
+    });
+    return res.status(201).json({
+        success: true,
+        message: `New Product ${name} has created successfully`,
+    });
+}));

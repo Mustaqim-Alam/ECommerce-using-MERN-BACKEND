@@ -71,3 +71,40 @@ export const getSingleProduct = tryCatch(async (req, res, next) => {
     product,
   });
 });
+
+export const updateProduct = tryCatch(async (req, res, next) => {
+  const { id } = req.params;
+
+  const { name, stock, category, price } = req.body;
+  const photo = req.file;
+  if (!photo) return next(new ErrorHandler("Please attach a photo", 400));
+
+  const product = await Product.findById(id);
+
+  if (!product) return next(new ErrorHandler("Invalid product", 400));
+
+  if (photo) {
+    rm(product.photo, () => {
+      console.log("Deleted");
+    });
+    product.photo = photo.path;
+  }
+
+  if (name) product.name = name;
+  if (stock) product.stock = stock;
+  if (category) product.category = category;
+  if (price) product.price = price;
+
+  await Product.create({
+    name,
+    price,
+    stock,
+    photo: photo?.path,
+    category: category.toLowerCase(),
+  });
+
+  return res.status(201).json({
+    success: true,
+    message: `New Product ${name} has created successfully`,
+  });
+});
