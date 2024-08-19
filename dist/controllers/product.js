@@ -142,12 +142,43 @@ export const getAllProducts = tryCatch((req, res, next) => __awaiter(void 0, voi
             $lte: Number(price),
         };
     }
-    const products = yield Product.find(basequery)
+    const productPromise = yield Product.find(basequery)
         .sort(sort && { price: sort === "asc" ? 1 : -1 })
         .limit(limit)
         .skip(skip);
-    const totalPages = Math.ceil(products.length / limit);
+    const [products, onlyFilteredProducts] = yield Promise.all([
+        productPromise,
+        Product.find(basequery),
+    ]);
+    const totalPages = Math.ceil(onlyFilteredProducts.length / limit);
     if (!products)
         return next(new ErrorHandler("Product not found", 404));
     return res.status(200).json({ success: true, products, totalPages });
 }));
+// const generateRandomProducts = async (count: number = 10) => {
+//   const products = [];
+//   for (let i = 0; i < count; i++) {
+//     const product = {
+//       name: faker.commerce.productName(),
+//       photo: "src\\uploads\\c071a20b-6682-4e89-9da4-0a927afd59bc.png",
+//       price: faker.commerce.price({ min: 1500, max: 80000, dec: 0 }),
+//       stock: faker.commerce.price({ min: 0, max: 100, dec: 0 }),
+//       category: faker.commerce.department(),
+//       createdAt: new Date(faker.date.past()),
+//       updatedAt: new Date(faker.date.recent()),
+//       __v: 0,
+//     };
+//     products.push(product);
+//   }
+//   await Product.create(products);
+//   console.log({ succecss: true });
+// };
+// const deleteRandomProduct = async (count: number = 15 ) => {
+//   const products = await Product.find({}).skip(2);
+//   for (let index = 0; index < products.length; index++) {
+//     const product = products[index];
+//     await product.deleteOne();
+//   }
+//   console.log({ Success: true });
+// };
+// deleteRandomProduct(20)
