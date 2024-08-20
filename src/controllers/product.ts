@@ -9,6 +9,7 @@ import {
 import ErrorHandler from "../Utils/utilityClass.js";
 import { rm } from "fs";
 import { faker } from "@faker-js/faker";
+import { myCache } from "../app.js";
 
 // @route POST /api/v1/product/new
 export const newProduct = tryCatch(
@@ -53,7 +54,7 @@ export const newProduct = tryCatch(
 export const getLatestProduct = tryCatch(async (req, res, next) => {
   const products = await Product.find({}).sort({ createdat: -1 }).limit(5);
   if (!products) return next(new ErrorHandler("Product not found!", 404));
-
+  myCache.set("latest-product", JSON.stringify(products));
   return res.status(200).json({
     success: true,
     products,
