@@ -90,9 +90,17 @@ export const getAdminProducts = tryCatch((req, res, next) => __awaiter(void 0, v
 }));
 // @route GET /api/v1/product/:id
 export const getSingleProduct = tryCatch((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const product = yield Product.findById(req.params.id);
-    if (!product)
-        return next(new ErrorHandler("Product not found!", 404));
+    const id = req.params.id;
+    let product;
+    if (myCache.has(`product - ${id}`)) {
+        product = JSON.parse(myCache.get(`product - ${id}`));
+    }
+    else {
+        product = yield Product.findById(id);
+        if (!product)
+            return next(new ErrorHandler("Product not found!", 404));
+        myCache.set(`product - ${id}`, JSON.stringify(product));
+    }
     return res.status(200).json({
         success: true,
         product,
