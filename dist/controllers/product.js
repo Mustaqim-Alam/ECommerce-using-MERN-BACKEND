@@ -11,6 +11,7 @@ import { tryCatch } from "../Middlewares/error.js";
 import { Product } from "../Models/product.js";
 import ErrorHandler from "../Utils/utilityClass.js";
 import { rm } from "fs";
+import { myCache } from "../app.js";
 // @route POST /api/v1/product/new
 export const newProduct = tryCatch((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, stock, category, price } = req.body;
@@ -41,7 +42,11 @@ export const newProduct = tryCatch((req, res, next) => __awaiter(void 0, void 0,
 }));
 //  @route GET /api/v1/product/latest
 export const getLatestProduct = tryCatch((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const products = yield Product.find({}).sort({ createdat: -1 }).limit(5);
+    let products = [];
+    if (myCache.has("latest-product"))
+        products = JSON.parse(myCache.get("latest-product"));
+    products = yield Product.find({}).sort({ createdat: -1 }).limit(5);
+    myCache.set("latest-product", JSON.stringify(products));
     if (!products)
         return next(new ErrorHandler("Product not found!", 404));
     return res.status(200).json({

@@ -52,9 +52,15 @@ export const newProduct = tryCatch(
 //  @route GET /api/v1/product/latest
 
 export const getLatestProduct = tryCatch(async (req, res, next) => {
-  const products = await Product.find({}).sort({ createdat: -1 }).limit(5);
-  if (!products) return next(new ErrorHandler("Product not found!", 404));
+  let products = [];
+
+  if (myCache.has("latest-product"))
+    products = JSON.parse(myCache.get("latest-product") as string);
+
+  products = await Product.find({}).sort({ createdat: -1 }).limit(5);
   myCache.set("latest-product", JSON.stringify(products));
+  if (!products) return next(new ErrorHandler("Product not found!", 404));
+
   return res.status(200).json({
     success: true,
     products,
@@ -220,5 +226,3 @@ export const getAllProducts = tryCatch(
 // };
 
 // deleteRandomProduct(20)
-
-
