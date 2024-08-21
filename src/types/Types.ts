@@ -47,3 +47,9 @@ export interface BaseQuery {
   };
   category?: string;
 }
+
+export type invalidCachedQuery = {
+  admin?: false;
+  user?: false;
+  product?: false;
+};
