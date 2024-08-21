@@ -43,12 +43,15 @@ export const newProduct = tryCatch((req, res, next) => __awaiter(void 0, void 0,
 //  @route GET /api/v1/product/latest
 export const getLatestProduct = tryCatch((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     let products = [];
-    if (myCache.has("latest-product"))
+    if (myCache.has("latest-product")) {
         products = JSON.parse(myCache.get("latest-product"));
-    products = yield Product.find({}).sort({ createdat: -1 }).limit(5);
-    myCache.set("latest-product", JSON.stringify(products));
-    if (!products)
-        return next(new ErrorHandler("Product not found!", 404));
+    }
+    else {
+        products = yield Product.find({}).sort({ createdat: -1 }).limit(5);
+        if (!products)
+            return next(new ErrorHandler("Product not found!", 404));
+        myCache.set("latest-product", JSON.stringify(products));
+    }
     return res.status(200).json({
         success: true,
         products,
@@ -56,7 +59,15 @@ export const getLatestProduct = tryCatch((req, res, next) => __awaiter(void 0, v
 }));
 // @route GET /api/v1/product/categories
 export const getAllCategories = tryCatch((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const categories = yield Product.distinct("category");
+    let categories;
+    if (myCache.has("all-categories")) {
+        myCache.get("categories");
+        categories = JSON.parse(myCache.get("all-categories"));
+    }
+    else {
+        categories = yield Product.distinct("category");
+        myCache.set("all-categories", JSON.stringify(categories));
+    }
     return res.status(200).json({
         success: true,
         categories,
@@ -64,7 +75,14 @@ export const getAllCategories = tryCatch((req, res, next) => __awaiter(void 0, v
 }));
 // @route GET /api/v1/product/admin-products
 export const getAdminProducts = tryCatch((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const adminProducts = yield Product.find({});
+    let adminProducts;
+    if (myCache.has("all-admin-products")) {
+        adminProducts = JSON.parse(myCache.get("all-admin-products"));
+    }
+    else {
+        adminProducts = yield Product.find({});
+        myCache.set("all-admin-products", JSON.stringify(adminProducts));
+    }
     return res.status(200).json({
         success: true,
         adminProducts,

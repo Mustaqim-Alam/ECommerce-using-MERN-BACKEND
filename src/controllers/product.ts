@@ -54,12 +54,13 @@ export const newProduct = tryCatch(
 export const getLatestProduct = tryCatch(async (req, res, next) => {
   let products = [];
 
-  if (myCache.has("latest-product"))
+  if (myCache.has("latest-product")) {
     products = JSON.parse(myCache.get("latest-product") as string);
-
-  products = await Product.find({}).sort({ createdat: -1 }).limit(5);
-  myCache.set("latest-product", JSON.stringify(products));
-  if (!products) return next(new ErrorHandler("Product not found!", 404));
+  } else {
+    products = await Product.find({}).sort({ createdat: -1 }).limit(5);
+    if (!products) return next(new ErrorHandler("Product not found!", 404));
+    myCache.set("latest-product", JSON.stringify(products));
+  }
 
   return res.status(200).json({
     success: true,
@@ -70,7 +71,15 @@ export const getLatestProduct = tryCatch(async (req, res, next) => {
 // @route GET /api/v1/product/categories
 
 export const getAllCategories = tryCatch(async (req, res, next) => {
-  const categories = await Product.distinct("category");
+  let categories;
+
+  if (myCache.has("all-categories")) {
+    myCache.get("categories");
+    categories = JSON.parse(myCache.get("all-categories") as string);
+  } else {
+    categories = await Product.distinct("category");
+    myCache.set("all-categories", JSON.stringify(categories));
+  }
 
   return res.status(200).json({
     success: true,
@@ -80,7 +89,13 @@ export const getAllCategories = tryCatch(async (req, res, next) => {
 
 // @route GET /api/v1/product/admin-products
 export const getAdminProducts = tryCatch(async (req, res, next) => {
-  const adminProducts = await Product.find({});
+  let adminProducts;
+  if (myCache.has("all-admin-products")) {
+    adminProducts = JSON.parse(myCache.get("all-admin-products") as string);
+  } else {
+    adminProducts = await Product.find({});
+    myCache.set("all-admin-products", JSON.stringify(adminProducts));
+  }
   return res.status(200).json({
     success: true,
     adminProducts,
