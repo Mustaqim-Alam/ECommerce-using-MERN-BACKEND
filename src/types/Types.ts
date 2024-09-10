@@ -49,7 +49,7 @@ export interface BaseQuery {
 }
 
 export type invalidCachedQuery = {
-  admin?: false;
-  user?: false;
-  product?: false;
+  admin?: boolean;
+  user?: boolean;
+  product?: boolean;
 };

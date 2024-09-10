@@ -14,12 +14,15 @@ export const connectdb = () => {
     .catch((err) => console.log(err));
 };
 
+// Checking caches for user, product and admin
 export const invalidCache = async ({
   admin,
   product,
   user,
 }: invalidCachedQuery) => {
+  // Check if 'user' is provided. If so, proceed to invalidate cache
   if (user) {
+    // Initialize an array to hold the cache keys for products and categories
     const productKeys: string[] = [
       "latest-product",
       "all-categories",
@@ -28,12 +31,18 @@ export const invalidCache = async ({
 
     const product = await Product.find({}).select("_id");
 
+    // Iterate through the fetched products and create cache keys for each product
+    product.forEach((element) => {
+      productKeys.push(`product-${element}`);
+    });
+    // Invalidate (delete) all the cache entries associated with the generated keys
     myCache.del(productKeys);
   }
   if (product) {
-    const productKeys: [] = [];
-    myCache.del(productKeys);
+    // const productKeys: [] = [];
+    // myCache.del(productKeys);
   }
   if (admin) {
+    const adminKeys: string[] = [];
   }
 };

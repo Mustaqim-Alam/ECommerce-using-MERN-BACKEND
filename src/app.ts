@@ -25,6 +25,8 @@ app.get("/", (req, res) => {
   res.send("API is working with /api/v1");
 });
 
+app.get("api/v1")
+
 // Using routes
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/product", productRoute);

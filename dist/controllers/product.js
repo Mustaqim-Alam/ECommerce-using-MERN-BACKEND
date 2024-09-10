@@ -12,34 +12,7 @@ import { myCache } from "../app.js";
 import { tryCatch } from "../Middlewares/error.js";
 import { Product } from "../Models/product.js";
 import ErrorHandler from "../Utils/utilityClass.js";
-// @route POST /api/v1/product/new
-export const newProduct = tryCatch((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name, stock, category, price } = req.body;
-    const photo = req.file;
-    // Check if a photo is attached
-    if (!photo)
-        return next(new ErrorHandler("Please attach a photo", 400));
-    // Ensure all required fields are filled
-    if (!name || !stock || !category || !price) {
-        // Delete the uploaded photo if any field is missing
-        rm(photo.path, () => {
-            console.log("Deleted incomplete product photo");
-        });
-        return next(new Error("Please add all fields!"));
-    }
-    // Create and save the new product
-    yield Product.create({
-        name,
-        price,
-        stock,
-        photo: photo.path,
-        category: category.toLowerCase(),
-    });
-    return res.status(201).json({
-        success: true,
-        message: `New Product ${name} has created successfully`,
-    });
-}));
+import { invalidCache } from "../Utils/features.js";
 //  @route GET /api/v1/product/latest
 export const getLatestProduct = tryCatch((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     let products = [];
@@ -106,6 +79,35 @@ export const getSingleProduct = tryCatch((req, res, next) => __awaiter(void 0, v
         product,
     });
 }));
+// @route POST /api/v1/product/new
+export const newProduct = tryCatch((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { name, stock, category, price } = req.body;
+    const photo = req.file;
+    // Check if a photo is attached
+    if (!photo)
+        return next(new ErrorHandler("Please attach a photo", 400));
+    // Ensure all required fields are filled
+    if (!name || !stock || !category || !price) {
+        // Delete the uploaded photo if any field is missing
+        rm(photo.path, () => {
+            console.log("Deleted incomplete product photo");
+        });
+        return next(new Error("Please add all fields!"));
+    }
+    // Create and save the new product
+    yield Product.create({
+        name,
+        price,
+        stock,
+        photo: photo.path,
+        category: category.toLowerCase(),
+    });
+    yield invalidCache({ product: true });
+    return res.status(201).json({
+        success: true,
+        message: `New Product ${name} has created successfully`,
+    });
+}));
 // @route PUT /api/v1/product/:id
 export const updateProduct = tryCatch((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
@@ -134,6 +136,7 @@ export const updateProduct = tryCatch((req, res, next) => __awaiter(void 0, void
     if (price)
         product.price = price;
     yield product.save();
+    yield invalidCache({ product: true });
     return res.status(200).json({
         success: true,
         message: `Product ${name} has updated successfully`,
@@ -149,6 +152,7 @@ export const deleteProduct = tryCatch((req, res, next) => __awaiter(void 0, void
     rm(product.photo, () => {
         console.log("Product photo deleted");
     });
+    yield invalidCache({ product: true });
     return res.status(200).json({
         success: true,
         message: `Product ${product.name} deleted successfully!`,

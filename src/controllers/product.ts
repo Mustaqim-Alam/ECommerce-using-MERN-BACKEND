@@ -9,44 +9,7 @@ import {
   searchRequestQuery,
 } from "../Types/types.js";
 import ErrorHandler from "../Utils/utilityClass.js";
-
-// @route POST /api/v1/product/new
-export const newProduct = tryCatch(
-  async (
-    req: Request<{}, {}, newProductRequestBody>,
-    res: Response,
-    next: NextFunction
-  ) => {
-    const { name, stock, category, price } = req.body;
-    const photo = req.file;
-
-    // Check if a photo is attached
-    if (!photo) return next(new ErrorHandler("Please attach a photo", 400));
-
-    // Ensure all required fields are filled
-    if (!name || !stock || !category || !price) {
-      // Delete the uploaded photo if any field is missing
-      rm(photo.path, () => {
-        console.log("Deleted incomplete product photo");
-      });
-      return next(new Error("Please add all fields!"));
-    }
-
-    // Create and save the new product
-    await Product.create({
-      name,
-      price,
-      stock,
-      photo: photo.path,
-      category: category.toLowerCase(),
-    });
-
-    return res.status(201).json({
-      success: true,
-      message: `New Product ${name} has created successfully`,
-    });
-  }
-);
+import { invalidCache } from "../Utils/features.js";
 
 //  @route GET /api/v1/product/latest
 
@@ -119,6 +82,46 @@ export const getSingleProduct = tryCatch(async (req, res, next) => {
   });
 });
 
+// @route POST /api/v1/product/new
+export const newProduct = tryCatch(
+  async (
+    req: Request<{}, {}, newProductRequestBody>,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const { name, stock, category, price } = req.body;
+    const photo = req.file;
+
+    // Check if a photo is attached
+    if (!photo) return next(new ErrorHandler("Please attach a photo", 400));
+
+    // Ensure all required fields are filled
+    if (!name || !stock || !category || !price) {
+      // Delete the uploaded photo if any field is missing
+      rm(photo.path, () => {
+        console.log("Deleted incomplete product photo");
+      });
+      return next(new Error("Please add all fields!"));
+    }
+
+    // Create and save the new product
+    await Product.create({
+      name,
+      price,
+      stock,
+      photo: photo.path,
+      category: category.toLowerCase(),
+    });
+
+    await invalidCache({ product: true });
+
+    return res.status(201).json({
+      success: true,
+      message: `New Product ${name} has created successfully`,
+    });
+  }
+);
+
 // @route PUT /api/v1/product/:id
 export const updateProduct = tryCatch(async (req, res, next) => {
   const { id } = req.params;
@@ -146,6 +149,8 @@ export const updateProduct = tryCatch(async (req, res, next) => {
 
   await product.save();
 
+  await invalidCache({ product: true });
+
   return res.status(200).json({
     success: true,
     message: `Product ${name} has updated successfully`,
@@ -162,6 +167,8 @@ export const deleteProduct = tryCatch(async (req, res, next) => {
   rm(product.photo, () => {
     console.log("Product photo deleted");
   });
+
+  await invalidCache({ product: true });
 
   return res.status(200).json({
     success: true,
