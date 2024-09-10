@@ -1,4 +1,6 @@
 import { NextFunction, Request, Response } from "express";
+import { rm } from "fs";
+import { myCache } from "../app.js";
 import { tryCatch } from "../Middlewares/error.js";
 import { Product } from "../Models/product.js";
 import {
@@ -7,9 +9,6 @@ import {
   searchRequestQuery,
 } from "../Types/types.js";
 import ErrorHandler from "../Utils/utilityClass.js";
-import { rm } from "fs";
-import { faker } from "@faker-js/faker";
-import { myCache } from "../app.js";
 
 // @route POST /api/v1/product/new
 export const newProduct = tryCatch(

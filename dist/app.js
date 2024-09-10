@@ -11,6 +11,7 @@ connectdb();
 const port = 9900;
 //Middleware for JSON Parsing
 app.use(express.json());
+// Using nodeCache for storing copies of data in a temporary storage location
 export const myCache = new NodeCache();
 app.get("/", (req, res) => {
     res.send("API is working with /api/v1");

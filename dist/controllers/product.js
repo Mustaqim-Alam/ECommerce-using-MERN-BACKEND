@@ -7,11 +7,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import { rm } from "fs";
+import { myCache } from "../app.js";
 import { tryCatch } from "../Middlewares/error.js";
 import { Product } from "../Models/product.js";
 import ErrorHandler from "../Utils/utilityClass.js";
-import { rm } from "fs";
-import { myCache } from "../app.js";
 // @route POST /api/v1/product/new
 export const newProduct = tryCatch((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, stock, category, price } = req.body;
