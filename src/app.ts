@@ -4,8 +4,17 @@ import productRoute from "./Routes/products.js";
 import userRoute from "./Routes/user.js";
 import { connectdb } from "./Utils/features.js";
 import NodeCache from "node-cache";
+import orderRoutes from "./Routes/orders.js";
+import {config} from "dotenv"
+import path from "path";
+
 
 const app = express();
+
+config ( {
+  path:"./.env"
+})
+
 
 //Database connection
 connectdb();
@@ -19,17 +28,16 @@ app.use(express.json());
 // Using nodeCache for storing copies of data in a temporary storage location
 export const myCache = new NodeCache();
 
-
-
 app.get("/", (req, res) => {
   res.send("API is working with /api/v1");
 });
 
-app.get("api/v1")
+app.get("api/v1");
 
 // Using routes
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/product", productRoute);
+app.use("/api/v1/order", orderRoutes);
 
 // Custom Error Handling middleware
 app.use("/uploads", express.static("uploads"));

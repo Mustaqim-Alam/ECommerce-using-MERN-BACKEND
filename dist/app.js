@@ -4,7 +4,12 @@ import productRoute from "./Routes/products.js";
 import userRoute from "./Routes/user.js";
 import { connectdb } from "./Utils/features.js";
 import NodeCache from "node-cache";
+import orderRoutes from "./Routes/orders.js";
+import { config } from "dotenv";
 const app = express();
+config({
+    path: "./.env"
+});
 //Database connection
 connectdb();
 //Assigning port for server
@@ -20,6 +25,7 @@ app.get("api/v1");
 // Using routes
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/product", productRoute);
+app.use("/api/v1/order", orderRoutes);
 // Custom Error Handling middleware
 app.use("/uploads", express.static("uploads"));
 app.use(errorMiddleware);
