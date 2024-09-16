@@ -6,16 +6,19 @@ import { connectdb } from "./Utils/features.js";
 import NodeCache from "node-cache";
 import orderRoutes from "./Routes/orders.js";
 import { config } from "dotenv";
+import morgan from "morgan";
 const app = express();
 config({
-    path: "./.env"
+    path: "./.env",
 });
-//Database connection
-connectdb();
 //Assigning port for server
-const port = 9900;
+const port = process.env.PORT || 9900;
+//Database connection
+const mongo_uri = process.env.MONGODB_URI || "mongodb://localhost:27017";
+connectdb(mongo_uri);
 //Middleware for JSON Parsing
 app.use(express.json());
+app.use(morgan("dev"));
 // Using nodeCache for storing copies of data in a temporary storage location
 export const myCache = new NodeCache();
 app.get("/", (req, res) => {

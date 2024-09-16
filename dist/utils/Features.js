@@ -10,9 +10,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import mongoose from "mongoose";
 import { myCache } from "../app.js";
 import { Product } from "../Models/product.js";
-export const connectdb = () => {
+export const connectdb = (uri) => {
     mongoose
-        .connect("mongodb://localhost:27017", {
+        .connect(uri, {
         dbName: "ECommerce_MERN",
     })
         .then((c) => console.log(`DB connection established with ${c.connection.host}`))
