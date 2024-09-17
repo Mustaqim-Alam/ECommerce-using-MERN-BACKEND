@@ -53,3 +53,7 @@ export type invalidCachedQuery = {
   user?: boolean;
   product?: boolean;
 };
+
+export interface NewOrderRequestBody {
+
+}

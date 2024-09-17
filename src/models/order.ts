@@ -26,6 +26,7 @@ const schema = new mongoose.Schema(
       status: {
         type: String,
         enum: ["pending", "shipped", " delivered"],
+        default: "processing",
       },
     },
     user: {
@@ -52,6 +53,16 @@ const schema = new mongoose.Schema(
     total: {
       type: Number,
       required: true,
+    },
+    orderItems: {
+      name: String,
+      photo: String,
+      Price: Number,
+      quantity: Number,
+      productId:{
+        type:mongoose.Types.ObjectId,
+        ref:"Product "
+      }
     },
   },
   {
