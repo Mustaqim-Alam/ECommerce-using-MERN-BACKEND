@@ -70,4 +70,4 @@ const schema = new mongoose.Schema(
   }
 );
 
-export const Order = mongoose.model<IProduct>("Order", schema);
+export const Order = mongoose.model("Order", schema);

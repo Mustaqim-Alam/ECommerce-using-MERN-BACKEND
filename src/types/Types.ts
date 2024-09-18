@@ -14,6 +14,7 @@ export interface newUserRequestBody {
   updatedAt: Date;
 }
 
+// Interface for the expected request body when creating a new product
 export interface newProductRequestBody {
   name: string;
   stock: number;
@@ -23,12 +24,15 @@ export interface newProductRequestBody {
 }
 
 // Type definition for controller functions
+// A controller function takes a Request, Response, and NextFunction
+// and returns a Promise that either resolves to void or a Response.
 export type ControllerType = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => Promise<void | Response<any, Record<string, any>>>;
 
+// Search query parameters for filtering products
 export type searchRequestQuery = {
   search?: string;
   category?: string;
@@ -37,6 +41,7 @@ export type searchRequestQuery = {
   page?: string;
 };
 
+// Base query structure for MongoDB filtering
 export interface BaseQuery {
   name?: {
     $regex: string;
@@ -48,12 +53,14 @@ export interface BaseQuery {
   category?: string;
 }
 
+// Type for cache invalidation queries
 export type invalidCachedQuery = {
   admin?: boolean;
   user?: boolean;
   product?: boolean;
 };
 
+// Interface for creating a new order
 export interface NewOrderRequestBody {
   shippingInfo: {};
   user: string;
@@ -65,6 +72,7 @@ export interface NewOrderRequestBody {
   orderItems: [];
 }
 
+// Type for individual order item details
 export type orderItemType = {
   name: string;
   address: string;

@@ -1,13 +1,18 @@
 import { tryCatch } from "../Middlewares/error.js";
 import { Order } from "../Models/order.js";
 import { Product } from "../Models/product.js";
-import { NewOrderRequestBody, orderItemType } from "../Types/types.js";
+import { Request } from "express";
+import {
+  NewOrderRequestBody,
+  newProductRequestBody,
+  orderItemType,
+} from "../Types/types.js";
 
 export const newOrder = tryCatch(
-  async (req: Request<{}, {}, NewOrderRequestBody>) => {
+  async (req: Request<{}, {}, NewOrderRequestBody>, res, next) => {
     const {
       shippingInfo,
-      subtoal,
+      subTotal,
       tax,
       total,
       discount,
@@ -18,7 +23,7 @@ export const newOrder = tryCatch(
 
     await Order.create({
       shippingInfo,
-      subtoal,
+      subTotal,
       tax,
       total,
       discount,
@@ -26,6 +31,7 @@ export const newOrder = tryCatch(
       user,
       orderItems,
     });
+    reduceStock(orderItems);
   }
 );
 
