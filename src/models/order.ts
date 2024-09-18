@@ -59,10 +59,10 @@ const schema = new mongoose.Schema(
       photo: String,
       Price: Number,
       quantity: Number,
-      productId:{
-        type:mongoose.Types.ObjectId,
-        ref:"Product "
-      }
+      productId: {
+        type: mongoose.Types.ObjectId,
+        ref: "Product ",
+      },
     },
   },
   {
@@ -70,4 +70,4 @@ const schema = new mongoose.Schema(
   }
 );
 
-export const Product = mongoose.model<IProduct>("Product", schema);
+export const Order = mongoose.model<IProduct>("Order", schema);

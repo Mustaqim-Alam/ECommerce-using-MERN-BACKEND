@@ -55,5 +55,21 @@ export type invalidCachedQuery = {
 };
 
 export interface NewOrderRequestBody {
-
+  shippingInfo: {};
+  user: string;
+  subTotal: number;
+  total: number;
+  tax: number;
+  shippingCharge: number;
+  discount: number;
+  orderItems: [];
 }
+
+export type orderItemType = {
+  name: string;
+  address: string;
+  pincode: number;
+  state: string;
+  cuntry: string;
+  productId: string;
+};
