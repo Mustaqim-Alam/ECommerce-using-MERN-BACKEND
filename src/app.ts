@@ -1,13 +1,12 @@
+import { config } from "dotenv";
 import express from "express";
+import morgan from "morgan";
+import NodeCache from "node-cache";
 import { errorMiddleware } from "./Middlewares/error.js";
+import orderRoutes from "./Routes/orders.js";
 import productRoute from "./Routes/products.js";
 import userRoute from "./Routes/user.js";
 import { connectdb } from "./Utils/features.js";
-import NodeCache from "node-cache";
-import orderRoutes from "./Routes/orders.js";
-import { config } from "dotenv";
-import path from "path";
-import morgan from "morgan";
 
 const app = express();
 
@@ -44,8 +43,7 @@ app.use("/api/v1/order", orderRoutes);
 // Custom Error Handling middleware
 app.use("/uploads", express.static("uploads"));
 
-app.use(errorMiddleware);
-
 app.listen(port, () => {
   console.log("App is listening on http://localhost:" + port);
 });
+app.use(errorMiddleware);
