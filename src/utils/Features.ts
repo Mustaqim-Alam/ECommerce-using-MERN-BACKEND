@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import { invalidCachedQuery } from "../Types/types.js";
 import { myCache } from "../app.js";
 import { Product } from "../Models/product.js";
+import { orderItemType, InvalidateCacheProps } from "../Types/types.js";
 
 export const connectdb = (uri: string) => {
   mongoose
@@ -18,10 +18,10 @@ export const connectdb = (uri: string) => {
 export const invalidCache = async ({
   admin,
   product,
-  user,
-}: invalidCachedQuery) => {
+  order,
+}: InvalidateCacheProps) => {
   // Check if 'user' is provided. If so, proceed to invalidate cache
-  if (user) {
+  if (product) {
     // Initialize an array to hold the cache keys for products and categories
     const productKeys: string[] = [
       "latest-product",
@@ -44,5 +44,15 @@ export const invalidCache = async ({
   }
   if (admin) {
     const adminKeys: string[] = [];
+  }
+};
+
+export const reduceStock = async (orderItems: orderItemType[]) => {
+  for (let i = 0; i < orderItems.length; i++) {
+    const order = orderItems[i];
+    const product = await Product.findById(order.productId);
+    if (!product) throw new Error("Product not found");
+    product.stock -= 2;
+    await product.save();
   }
 };

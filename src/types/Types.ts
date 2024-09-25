@@ -54,10 +54,14 @@ export interface BaseQuery {
 }
 
 // Type for cache invalidation queries
-export type invalidCachedQuery = {
-  admin?: boolean;
-  user?: boolean;
+export type InvalidateCacheProps = {
   product?: boolean;
+  order?: boolean;
+  admin?: boolean;
+  review?: boolean;
+  userId?: string;
+  orderId?: string;
+  productId?: string | string[];
 };
 
 // Interface for creating a new order
