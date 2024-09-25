@@ -2,7 +2,8 @@ import mongoose from "mongoose";
 
 const schema = new mongoose.Schema(
   {
-    OrderInfo: {
+    shippingInfo: {
+      // Changed from 'OrderInfo'
       address: {
         type: String,
         required: true,
@@ -15,7 +16,8 @@ const schema = new mongoose.Schema(
         type: String,
         required: true,
       },
-      Cuntry: {
+      country: {
+        // Corrected spelling from 'Cuntry'
         type: String,
         required: true,
       },
@@ -25,8 +27,8 @@ const schema = new mongoose.Schema(
       },
       status: {
         type: String,
-        enum: ["pending", "shipped", " delivered"],
-        default: "processing",
+        enum: ["pending", "shipped", "delivered"], // Removed 'processing' as it's not a valid enum
+        default: "pending",
       },
     },
     user: {
@@ -34,8 +36,8 @@ const schema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    subtotal: {
-      type: Number,
+    subTotal: {
+      type: Number, 
       required: true,
     },
     tax: {
@@ -54,16 +56,19 @@ const schema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    orderItems: {
-      name: String,
-      photo: String,
-      Price: Number,
-      quantity: Number,
-      productId: {
-        type: mongoose.Types.ObjectId,
-        ref: "Product ",
+    orderItems: [
+      {
+        name: String,
+        photo: String,
+        price: Number,
+        quantity: Number,
+        productId: {
+          type: mongoose.Types.ObjectId,
+          ref: "Product",
+          required: true,
+        },
       },
-    },
+    ],
   },
   {
     timestamps: true,

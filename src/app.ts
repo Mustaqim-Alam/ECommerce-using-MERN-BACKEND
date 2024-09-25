@@ -23,7 +23,6 @@ connectdb(mongo_uri);
 
 //Middleware for JSON Parsing
 app.use(express.json());
-
 app.use(morgan("dev"));
 
 // Using nodeCache for storing copies of data in a temporary storage location
@@ -43,7 +42,7 @@ app.use("/api/v1/order", orderRoutes);
 // Custom Error Handling middleware
 app.use("/uploads", express.static("uploads"));
 
+app.use(errorMiddleware);
 app.listen(port, () => {
   console.log("App is listening on http://localhost:" + port);
 });
-app.use(errorMiddleware);

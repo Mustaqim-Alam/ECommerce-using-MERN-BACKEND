@@ -82,6 +82,6 @@ export type orderItemType = {
   address: string;
   pincode: number;
   state: string;
-  cuntry: string;
+  country: string;
   productId: string;
 };

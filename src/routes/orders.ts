@@ -1,7 +1,7 @@
 import express from "express";
 import { newOrder } from "../Controllers/order.js";
 
-const app = express.Router();
+const app = express();
 
 app.post("/new", newOrder);
 

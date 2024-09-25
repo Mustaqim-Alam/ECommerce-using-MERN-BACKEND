@@ -31,7 +31,7 @@ app.use("/api/v1/product", productRoute);
 app.use("/api/v1/order", orderRoutes);
 // Custom Error Handling middleware
 app.use("/uploads", express.static("uploads"));
+app.use(errorMiddleware);
 app.listen(port, () => {
     console.log("App is listening on http://localhost:" + port);
 });
-app.use(errorMiddleware);
