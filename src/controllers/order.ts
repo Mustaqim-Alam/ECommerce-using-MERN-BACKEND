@@ -69,3 +69,18 @@ export const myOrders = tryCatch(async (req, res, next) => {
     orders,
   });
 });
+
+export const allOrders = tryCatch(async (req, res, next) => {
+  const key = `all-orders`;
+  let orders = [];
+  if (myCache.has(key)) orders = JSON.parse(myCache.get(key) as string);
+  else {
+    orders = await Order.find();
+    myCache.set(key, JSON.stringify(orders));
+  }
+
+  return res.status(200).json({
+    satisfies: true,
+    orders
+  })
+});
