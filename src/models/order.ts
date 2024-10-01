@@ -27,7 +27,7 @@ const schema = new mongoose.Schema(
       },
       status: {
         type: String,
-        enum: ["pending", "shipped", "delivered"], // Removed 'processing' as it's not a valid enum
+        enum: ["Processing", "Shipped", "Delivered"],
         default: "pending",
       },
     },
@@ -37,7 +37,7 @@ const schema = new mongoose.Schema(
       required: true,
     },
     subTotal: {
-      type: Number, 
+      type: Number,
       required: true,
     },
     tax: {

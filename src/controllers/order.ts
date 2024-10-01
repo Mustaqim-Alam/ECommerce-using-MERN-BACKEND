@@ -85,6 +85,24 @@ export const allOrders = tryCatch(async (req, res, next) => {
   });
 });
 
+export const proccessOrders = tryCatch(async (req, res, next) => {
+  const id = req.params;
+  const order = await Order.findById(id);
+  if (!order) return next(new ErrorHandler("Order not found", 404));
+
+  switch (order.status) {
+    case "Processing":
+      order.status = "shipped";
+      break;
+    case "Shipped":
+      order.status = "Delivered";
+      break;
+    default:
+      order.status = "Delivered";
+      break;
+  }
+});
+
 export const deleteOrder = tryCatch(async (req, res, next) => {
   const { id } = req.params;
 
