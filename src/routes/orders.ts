@@ -1,5 +1,10 @@
 import express from "express";
-import { allOrders, myOrders, newOrder } from "../Controllers/order.js";
+import {
+  allOrders,
+  deleteOrder,
+  myOrders,
+  newOrder,
+} from "../Controllers/order.js";
 import { adminOnly } from "../Middlewares/auth.js";
 
 const app = express();
@@ -10,5 +15,7 @@ app.post("/new", newOrder);
 app.get("/my", myOrders);
 // Route - /api/v1/order/allOrders
 app.get("/allOrders", adminOnly, allOrders);
+// Route - /api/v1/order/deleteOrder
+app.delete("/deleteOrder", deleteOrder);
 
 export default app;

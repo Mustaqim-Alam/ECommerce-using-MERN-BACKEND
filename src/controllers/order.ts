@@ -1,5 +1,5 @@
 import { Request } from "express";
-import { tryCatch } from "../Middlewares/error.js";
+import { errorMiddleware, tryCatch } from "../Middlewares/error.js";
 import { Order } from "../Models/order.js";
 import { NewOrderRequestBody } from "../Types/types.js";
 import { invalidCache, reduceStock } from "../Utils/features.js";
@@ -81,6 +81,26 @@ export const allOrders = tryCatch(async (req, res, next) => {
 
   return res.status(200).json({
     satisfies: true,
-    orders
-  })
+    orders,
+  });
+});
+
+export const deleteOrder = tryCatch(async (req, res, next) => {
+  const { id } = req.params;
+
+  const order = await Order.findById(id);
+
+  if (!order) next(new ErrorHandler("Order not found!", 404));
+  await order?.deleteOne();
+
+  await invalidCache({
+    product: false,
+    order: true,
+    admin: true,
+    userId: order?.user,
+  });
+  return res.status(200).json({
+    success: true,
+    message: "Order deleted successfully",
+  });
 });
