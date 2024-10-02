@@ -5,6 +5,7 @@ import { NewOrderRequestBody } from "../Types/types.js";
 import { invalidCache, reduceStock } from "../Utils/features.js";
 import ErrorHandler from "../Utils/utilityClass.js";
 import { myCache } from "../app.js";
+import { Product } from "../Models/product.js";
 
 export const newOrder = tryCatch(
   async (req: Request<{}, {}, NewOrderRequestBody>, res, next) => {
@@ -95,12 +96,12 @@ export const allOrders = tryCatch(async (req, res, next) => {
   let orders = [];
   if (myCache.has(key)) orders = JSON.parse(myCache.get(key) as string);
   else {
-    orders = await Order.find();
+    orders = await Order.find().populate("user", "name");
     myCache.set(key, JSON.stringify(orders));
   }
 
   return res.status(200).json({
-    satisfies: true,
+    success: true,
     orders,
   });
 });
@@ -126,6 +127,13 @@ export const proccessOrders = tryCatch(async (req, res, next) => {
   console.log(order.status);
 
   await order.save();
+
+  await invalidCache({
+    Product: false,
+    order: true,
+    admin: true,
+    userId: order.user,
+  });
 
   res.status(200).json({
     seccess: true,

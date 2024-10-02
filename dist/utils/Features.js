@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import mongoose from "mongoose";
 import { myCache } from "../app.js";
 import { Product } from "../Models/product.js";
+import { Order } from "../Models/order.js";
 export const connectdb = (uri) => {
     mongoose
         .connect(uri, {
@@ -19,7 +20,7 @@ export const connectdb = (uri) => {
         .catch((err) => console.log(err));
 };
 // Checking caches for user, product and admin
-export const invalidCache = (_a) => __awaiter(void 0, [_a], void 0, function* ({ admin, product, order, }) {
+export const invalidCache = (_a) => __awaiter(void 0, [_a], void 0, function* ({ admin, product, order, orderId, userId, }) {
     // Check if 'user' is provided. If so, proceed to invalidate cache
     if (product) {
         // Initialize an array to hold the cache keys for products and categories
@@ -36,9 +37,13 @@ export const invalidCache = (_a) => __awaiter(void 0, [_a], void 0, function* ({
         // Invalidate (delete) all the cache entries associated with the generated keys
         myCache.del(productKeys);
     }
-    if (product) {
-        // const productKeys: [] = [];
-        // myCache.del(productKeys);
+    if (order) {
+        const orderKeys = ["all-orders", `my-orders-${userId}`];
+        const orders = yield Order.find({}).select("_id");
+        orders.forEach((i) => {
+            orderKeys.push(`order-${i._id}`);
+        });
+        myCache.del(orderKeys);
     }
     if (admin) {
         const adminKeys = [];
