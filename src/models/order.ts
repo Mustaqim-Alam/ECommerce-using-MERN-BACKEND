@@ -25,11 +25,11 @@ const schema = new mongoose.Schema(
         type: Number,
         required: true,
       },
-      status: {
-        type: String,
-        enum: ["Processing", "Shipped", "Delivered"],
-        default: "pending",
-      },
+    },
+    status: {
+      type: String,
+      enum: ["Processing", "Shipped", "Delivered"],
+      default: "Processing",
     },
     user: {
       type: String,

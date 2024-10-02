@@ -70,6 +70,26 @@ export const myOrders = tryCatch(async (req, res, next) => {
   });
 });
 
+export const getSingleOrder = tryCatch(async (req, res, next) => {
+  const { id } = req.params;
+
+  const key = `order-${id}`;
+
+  let order;
+
+  if (myCache.has(key)) order = JSON.parse(myCache.get(key) as string);
+  else {
+    order = await Order.findById(id).populate("user", "name");
+    if (!order) next(new ErrorHandler("Order not found!", 404));
+    myCache.set(key, JSON.stringify(order));
+  }
+
+  res.status(200).json({
+    success: true,
+    order,
+  });
+});
+
 export const allOrders = tryCatch(async (req, res, next) => {
   const key = `all-orders`;
   let orders = [];
@@ -86,13 +106,15 @@ export const allOrders = tryCatch(async (req, res, next) => {
 });
 
 export const proccessOrders = tryCatch(async (req, res, next) => {
-  const id = req.params;
+  const { id } = req.params;
   const order = await Order.findById(id);
   if (!order) return next(new ErrorHandler("Order not found", 404));
 
+  console.log(order.status);
+
   switch (order.status) {
     case "Processing":
-      order.status = "shipped";
+      order.status = "Shipped";
       break;
     case "Shipped":
       order.status = "Delivered";
@@ -101,6 +123,14 @@ export const proccessOrders = tryCatch(async (req, res, next) => {
       order.status = "Delivered";
       break;
   }
+  console.log(order.status);
+
+  await order.save();
+
+  res.status(200).json({
+    seccess: true,
+    message: "Order Processed successsfully",
+  });
 });
 
 export const deleteOrder = tryCatch(async (req, res, next) => {
@@ -109,6 +139,7 @@ export const deleteOrder = tryCatch(async (req, res, next) => {
   const order = await Order.findById(id);
 
   if (!order) next(new ErrorHandler("Order not found!", 404));
+
   await order?.deleteOne();
 
   await invalidCache({
@@ -117,6 +148,7 @@ export const deleteOrder = tryCatch(async (req, res, next) => {
     admin: true,
     userId: order?.user,
   });
+
   return res.status(200).json({
     success: true,
     message: "Order deleted successfully",
