@@ -34,7 +34,7 @@ export const newOrder = tryCatch(
       return next(new ErrorHandler("All fields are required!", 400));
     }
 
-    await Order.create({
+    const order = await Order.create({
       shippingInfo,
       subTotal,
       tax,
@@ -45,6 +45,13 @@ export const newOrder = tryCatch(
       orderItems,
     });
     reduceStock(orderItems);
+    await invalidCache({
+      product: false,
+      order: true,
+      admin: true,
+      userId: user,
+      productId: order.orderItems.map((i) => String(i.productId)),
+    });
     await invalidCache({ product: true, order: true, admin: true });
     return res.status(201).json({
       success: true,
@@ -84,6 +91,14 @@ export const getSingleOrder = tryCatch(async (req, res, next) => {
     if (!order) next(new ErrorHandler("Order not found!", 404));
     myCache.set(key, JSON.stringify(order));
   }
+
+  await invalidCache({
+    product: false,
+    order: true,
+    admin: true,
+    userId: order.user,
+    orderId: String(order._id),
+  });
 
   res.status(200).json({
     success: true,
@@ -129,10 +144,11 @@ export const proccessOrders = tryCatch(async (req, res, next) => {
   await order.save();
 
   await invalidCache({
-    Product: false,
+    product: false,
     order: true,
     admin: true,
     userId: order.user,
+    orderId: String(order._id),
   });
 
   res.status(200).json({
@@ -154,7 +170,8 @@ export const deleteOrder = tryCatch(async (req, res, next) => {
     product: false,
     order: true,
     admin: true,
-    userId: order?.user,
+    userId: order.user,
+    orderId: String(order._id),
   });
 
   return res.status(200).json({

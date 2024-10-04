@@ -22,6 +22,7 @@ export const invalidCache = async ({
   order,
   orderId,
   userId,
+  productId,
 }: InvalidateCacheProps) => {
   // Check if 'user' is provided. If so, proceed to invalidate cache
   if (product) {
@@ -42,12 +43,17 @@ export const invalidCache = async ({
     myCache.del(productKeys);
   }
   if (order) {
-    const orderKeys: string[] = ["all-orders", `my-orders-${userId}`];
+    const orderKeys: string[] = [
+      "all-orders",
+      `my-orders-${userId}`,
+      `order-${orderId}`,
+      `product-${productId}`
+    ];
 
     const orders = await Order.find({}).select("_id");
 
     orders.forEach((i) => {
-      orderKeys.push(`order-${i._id}`);
+      orderKeys.push();
     });
 
     myCache.del(orderKeys);

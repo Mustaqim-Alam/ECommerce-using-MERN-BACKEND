@@ -20,7 +20,7 @@ export const connectdb = (uri) => {
         .catch((err) => console.log(err));
 };
 // Checking caches for user, product and admin
-export const invalidCache = (_a) => __awaiter(void 0, [_a], void 0, function* ({ admin, product, order, orderId, userId, }) {
+export const invalidCache = (_a) => __awaiter(void 0, [_a], void 0, function* ({ admin, product, order, orderId, userId, productId, }) {
     // Check if 'user' is provided. If so, proceed to invalidate cache
     if (product) {
         // Initialize an array to hold the cache keys for products and categories
@@ -38,10 +38,15 @@ export const invalidCache = (_a) => __awaiter(void 0, [_a], void 0, function* ({
         myCache.del(productKeys);
     }
     if (order) {
-        const orderKeys = ["all-orders", `my-orders-${userId}`];
+        const orderKeys = [
+            "all-orders",
+            `my-orders-${userId}`,
+            `order-${orderId}`,
+            `product-${productId}`
+        ];
         const orders = yield Order.find({}).select("_id");
         orders.forEach((i) => {
-            orderKeys.push(`order-${i._id}`);
+            orderKeys.push();
         });
         myCache.del(orderKeys);
     }
