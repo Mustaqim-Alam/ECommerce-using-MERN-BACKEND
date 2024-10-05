@@ -39,3 +39,22 @@ export const allCoupon = tryCatch(async (req, res, next) => {
     coupons,
   });
 });
+
+
+export const deleteCoupon = tryCatch(async (req, res, next) => {
+  const {id} = req.params;
+
+  const coupon = await Coupon.findById(id);
+
+  if (!coupon) return next(new ErrorHandler("Invalid Coupon Id", 400));
+  console.log(coupon?.code);
+  
+
+
+  coupon.deleteOne();
+
+  res.status(200).json({
+    success: true,
+    message: `Coupon ${coupon.code} deleted succesfully`,
+  });
+});
