@@ -1,12 +1,13 @@
 import { config } from "dotenv";
+import { errorMiddleware } from "./Middlewares/error.js";
+import { connectdb } from "./Utils/features.js";
 import express from "express";
 import morgan from "morgan";
 import NodeCache from "node-cache";
-import { errorMiddleware } from "./Middlewares/error.js";
 import orderRoutes from "./Routes/orders.js";
 import productRoute from "./Routes/products.js";
 import userRoute from "./Routes/user.js";
-import { connectdb } from "./Utils/features.js";
+import paymentRoute from "./Routes/payment.js";
 
 const app = express();
 
@@ -38,6 +39,7 @@ app.get("api/v1");
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/product", productRoute);
 app.use("/api/v1/order", orderRoutes);
+app.use("/api/v1/payment", paymentRoute);
 
 // Custom Error Handling middleware
 app.use("/uploads", express.static("uploads"));
