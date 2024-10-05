@@ -169,8 +169,8 @@ export const deleteOrder = tryCatch(async (req, res, next) => {
     product: false,
     order: true,
     admin: true,
-    userId: order.user,
-    orderId: String(order._id),
+    userId: order?.user,
+    orderId: String(order?._id),
   });
 
   return res.status(200).json({

@@ -8,6 +8,7 @@ import orderRoutes from "./Routes/orders.js";
 import productRoute from "./Routes/products.js";
 import userRoute from "./Routes/user.js";
 import paymentRoute from "./Routes/payment.js";
+import adminDashboardRoute from "./Routes/stats.js";
 const app = express();
 config({
     path: "./.env",
@@ -31,6 +32,7 @@ app.use("/api/v1/user", userRoute);
 app.use("/api/v1/product", productRoute);
 app.use("/api/v1/order", orderRoutes);
 app.use("/api/v1/payment", paymentRoute);
+app.use("/api/v1/dashboard", adminDashboardRoute);
 // Custom Error Handling middleware
 app.use("/uploads", express.static("uploads"));
 app.use(errorMiddleware);
