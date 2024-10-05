@@ -1,11 +1,10 @@
 import { Request } from "express";
-import { errorMiddleware, tryCatch } from "../Middlewares/error.js";
+import { myCache } from "../app.js";
+import { tryCatch } from "../Middlewares/error.js";
 import { Order } from "../Models/order.js";
 import { NewOrderRequestBody } from "../Types/types.js";
 import { invalidCache, reduceStock } from "../Utils/features.js";
 import ErrorHandler from "../Utils/utilityClass.js";
-import { myCache } from "../app.js";
-import { Product } from "../Models/product.js";
 
 export const newOrder = tryCatch(
   async (req: Request<{}, {}, NewOrderRequestBody>, res, next) => {
