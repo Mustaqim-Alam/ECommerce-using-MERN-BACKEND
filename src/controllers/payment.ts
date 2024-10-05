@@ -16,7 +16,6 @@ export const newCoupon = tryCatch(async (req, res, next) => {
   });
 });
 
-
 export const applyDiscount = tryCatch(async (req, res, next) => {
   const { coupon } = req.query;
 
@@ -27,5 +26,16 @@ export const applyDiscount = tryCatch(async (req, res, next) => {
   res.status(200).json({
     success: true,
     discount: discount.amount,
+  });
+});
+
+export const allCoupon = tryCatch(async (req, res, next) => {
+  const coupons = await Coupon.find({});
+
+  if (!coupons) return next(new ErrorHandler("Coupon not available", 400));
+
+  res.status(200).json({
+    success: true,
+    coupons,
   });
 });
