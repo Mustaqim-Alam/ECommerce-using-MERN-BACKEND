@@ -76,6 +76,8 @@ export const adminDashboardStats = tryCatch(async (req, res, next) => {
       lastMonthProductsPromise,
       lastMonthUserPromise,
     ]);
+    console.log(thisMonthUsers.length);
+    
     const userChangePercentage = calculatePercentae(
       thisMonthUsers.length,
       lastMonthUsers.length
