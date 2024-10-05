@@ -136,7 +136,7 @@ export const updateProduct = tryCatch((req, res, next) => __awaiter(void 0, void
     if (price)
         product.price = price;
     yield product.save();
-    yield invalidCache({ product: true });
+    yield invalidCache({ product: true, productId: String(product._id) });
     return res.status(200).json({
         success: true,
         message: `Product ${name} has updated successfully`,
@@ -152,7 +152,7 @@ export const deleteProduct = tryCatch((req, res, next) => __awaiter(void 0, void
     rm(product.photo, () => {
         console.log("Product photo deleted");
     });
-    yield invalidCache({ product: true });
+    yield invalidCache({ product: true, productId: String(product._id) });
     return res.status(200).json({
         success: true,
         message: `Product ${product.name} deleted successfully!`,

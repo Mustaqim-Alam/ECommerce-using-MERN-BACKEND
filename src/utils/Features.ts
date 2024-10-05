@@ -33,6 +33,11 @@ export const invalidCache = async ({
       "all-admin-products",
     ];
 
+    if (typeof productId === "string")
+      productKeys.push(`productId-${productId}`);
+    if (typeof productId === "object")
+      productId.forEach((i) => productKeys.push(`productId-${i}`));
+
     const product = await Product.find({}).select("_id");
 
     // Iterate through the fetched products and create cache keys for each product
@@ -47,7 +52,7 @@ export const invalidCache = async ({
       "all-orders",
       `my-orders-${userId}`,
       `order-${orderId}`,
-      `product-${productId}`
+      `product-${productId}`,
     ];
 
     const orders = await Order.find({}).select("_id");

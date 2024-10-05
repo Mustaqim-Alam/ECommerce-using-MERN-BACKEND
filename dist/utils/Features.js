@@ -29,6 +29,10 @@ export const invalidCache = (_a) => __awaiter(void 0, [_a], void 0, function* ({
             "all-categories",
             "all-admin-products",
         ];
+        if (typeof productId === "string")
+            productKeys.push(`productId-${productId}`);
+        if (typeof productId === "object")
+            productId.forEach((i) => productKeys.push(`productId-${i}`));
         const product = yield Product.find({}).select("_id");
         // Iterate through the fetched products and create cache keys for each product
         product.forEach((element) => {
@@ -42,7 +46,7 @@ export const invalidCache = (_a) => __awaiter(void 0, [_a], void 0, function* ({
             "all-orders",
             `my-orders-${userId}`,
             `order-${orderId}`,
-            `product-${productId}`
+            `product-${productId}`,
         ];
         const orders = yield Order.find({}).select("_id");
         orders.forEach((i) => {
