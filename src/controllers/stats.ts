@@ -1,7 +1,9 @@
 import { myCache } from "../app.js";
 import { tryCatch } from "../Middlewares/error.js";
+import { Order } from "../Models/order.js";
 import { Product } from "../Models/product.js";
 import { User } from "../Models/user.js";
+import { calculatePercentae } from "../Utils/features.js";
 
 export const adminDashboardStats = tryCatch(async (req, res, next) => {
   let stats;
@@ -33,8 +35,6 @@ export const adminDashboardStats = tryCatch(async (req, res, next) => {
       },
     });
 
-
-    
     const lastMonthUserPromise = User.find({
       cretedAt: {
         $gte: lastMonth.start,
@@ -47,6 +47,53 @@ export const adminDashboardStats = tryCatch(async (req, res, next) => {
         $lte: thisMonth.end,
       },
     });
+
+    const lastMonthOrderPromise = Order.find({
+      cretedAt: {
+        $gte: lastMonth.start,
+        $lte: lastMonth.end,
+      },
+    });
+    const thisMonthOrderPromise = Order.find({
+      createdAt: {
+        $gte: thisMonth.start,
+        $lte: thisMonth.end,
+      },
+    });
+
+    const [
+      thisMonthOrders,
+      thisMonthProducts,
+      thisMonthUsers,
+      lastMonthOrders,
+      lastMonthProducts,
+      lastMonthUsers,
+    ] = await Promise.all([
+      thisMonthOrderPromise,
+      thisMonthProductsPromise,
+      thisMonthUserPromise,
+      lastMonthOrderPromise,
+      lastMonthProductsPromise,
+      lastMonthUserPromise,
+    ]);
+    const userChangePercentage = calculatePercentae(
+      thisMonthUsers.length,
+      lastMonthUsers.length
+    );
+    const orderChangePercentage = calculatePercentae(
+      thisMonthOrders.length,
+      lastMonthOrders.length
+    );
+    const productChangePercentage = calculatePercentae(
+      thisMonthProducts.length,
+      lastMonthProducts.length
+    );
+
+    stats = {
+      userChangePercentage,
+      orderChangePercentage,
+      productChangePercentage,
+    };
   }
 
   return res.status(200).json({
