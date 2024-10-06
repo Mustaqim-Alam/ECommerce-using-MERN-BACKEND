@@ -68,9 +68,9 @@ export const reduceStock = (orderItems) => __awaiter(void 0, void 0, void 0, fun
         yield product.save();
     }
 });
-export const calculatePercentae = (thisMonth, lastMonth) => {
+export const calculatePercentage = (thisMonth, lastMonth) => {
     if (lastMonth === 0)
         return thisMonth * 100;
-    const percent = ((thisMonth - lastMonth) / lastMonth) * 100;
-    return percent.toFixed(0);
+    const percent = (thisMonth / lastMonth) * 100;
+    return Number(percent.toFixed(0));
 };
