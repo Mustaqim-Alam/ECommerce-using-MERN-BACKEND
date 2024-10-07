@@ -76,9 +76,18 @@ export const adminDashboardStats = tryCatch(async (req, res, next) => {
       lastMonthProductsPromise,
       lastMonthUserPromise,
     ]);
-    console.log(thisMonthUsers.length);
+
+    const thisMonthRevenue = thisMonthOrders.reduce(
+      (total, order) => total + (order.total || 0),
+      0
+    );
+    const lastMonthRevenue = lastMonthOrders.reduce(
+      (total, order) => total + (order.total || 0),
+      0
+    );
 
     const changePercent = {
+      revenue: calculatePercentage(thisMonthRevenue, lastMonthRevenue),
       user: calculatePercentage(thisMonthUsers.length, lastMonthUsers.length),
       order: calculatePercentage(
         thisMonthOrders.length,
