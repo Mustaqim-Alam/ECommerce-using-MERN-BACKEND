@@ -69,6 +69,10 @@ export const adminDashboardStats = tryCatch(async (req, res, next) => {
       },
     });
 
+    const latestTransactionPromise = Order.find({})
+      .select(["status", "discount", "orderItems", "total"])
+      .limit(4);
+
     const [
       thisMonthOrders,
       thisMonthProducts,
@@ -80,6 +84,9 @@ export const adminDashboardStats = tryCatch(async (req, res, next) => {
       userCount,
       productCount,
       allOrders,
+      productCategory,
+      maleUserCount,
+      latestTransaction,
     ] = await Promise.all([
       thisMonthOrderPromise,
       thisMonthProductsPromise,
@@ -91,6 +98,9 @@ export const adminDashboardStats = tryCatch(async (req, res, next) => {
       User.countDocuments(),
       Product.countDocuments(),
       Order.find({}).select("total"),
+      Product.distinct("category"),
+      User.countDocuments({ gender: "male" }),
+      latestTransactionPromise,
     ]);
 
     const thisMonthRevenue = thisMonthOrders.reduce(
@@ -120,13 +130,6 @@ export const adminDashboardStats = tryCatch(async (req, res, next) => {
       0
     );
 
-    const count = {
-      user: userCount,
-      product: productCount,
-      order: allOrders.length,
-      revenue,
-    };
-
     const orderMonthsCount = new Array(6).fill(0);
     const orderMonthsRevenue = new Array(6).fill(0);
 
@@ -142,6 +145,38 @@ export const adminDashboardStats = tryCatch(async (req, res, next) => {
         orderMonthsRevenue[6 - monthsDiff - 1] += order.total;
       }
     });
+    const categoriesCountPromise = productCategory.map((category) =>
+      Product.countDocuments({ category })
+    );
+
+    const categoriesCount = await Promise.all(categoriesCountPromise);
+
+    const categoryCount: Record<string, Number>[] = [];
+    productCategory.forEach((category, i) => {
+      categoryCount.push({
+        [category]: Math.round((categoriesCount[i] / productCount) * 100),
+      });
+    });
+
+    const count = {
+      user: userCount,
+      product: productCount,
+      order: allOrders.length,
+      revenue,
+    };
+
+    const userGenderRatio = {
+      male: maleUserCount,
+      female: userCount - maleUserCount,
+    };
+
+    const modifiedLatestTransactions = latestTransaction.map((i) => ({
+      _id: i.id,
+      status: i.status,
+      total: i.total,
+      discount: i.discount,
+      quantity: i.orderItems.quantity,
+    }));
 
     stats = {
       changePercent,
@@ -150,6 +185,10 @@ export const adminDashboardStats = tryCatch(async (req, res, next) => {
         order: orderMonthsCount,
         revenue: orderMonthsRevenue,
       },
+      categoryCount,
+      userGenderRatio,
+      latestTransaction,
+      modifiedLatestTransactions,
     };
   }
 
