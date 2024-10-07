@@ -175,7 +175,7 @@ export const adminDashboardStats = tryCatch(async (req, res, next) => {
       status: i.status,
       total: i.total,
       discount: i.discount,
-      quantity: i.orderItems.quantity,
+      quantity: i.orderItems.length,
     }));
 
     stats = {
@@ -187,8 +187,7 @@ export const adminDashboardStats = tryCatch(async (req, res, next) => {
       },
       categoryCount,
       userGenderRatio,
-      latestTransaction,
-      modifiedLatestTransactions,
+      latestTransaction: modifiedLatestTransactions,
     };
   }
 
