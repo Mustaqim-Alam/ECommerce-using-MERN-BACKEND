@@ -3,13 +3,16 @@ import { tryCatch } from "../Middlewares/error.js";
 import { Order } from "../Models/order.js";
 import { Product } from "../Models/product.js";
 import { User } from "../Models/user.js";
-import { calculatePercentage } from "../Utils/features.js";
+import {
+  calculatePercentage,
+  getProductCategories,
+} from "../Utils/features.js";
 
 export const adminDashboardStats = tryCatch(async (req, res, next) => {
   let stats;
 
   if (myCache.has("admin-stats"))
-    stats = myCache.get(JSON.parse("admin-stats") as string);
+    stats = JSON.parse(myCache.get("admin-stats") as string);
   else {
     const today = new Date();
     const sixMonthsAgo = new Date();
@@ -145,17 +148,10 @@ export const adminDashboardStats = tryCatch(async (req, res, next) => {
         orderMonthsRevenue[6 - monthsDiff - 1] += order.total;
       }
     });
-    const categoriesCountPromise = productCategory.map((category) =>
-      Product.countDocuments({ category })
-    );
 
-    const categoriesCount = await Promise.all(categoriesCountPromise);
-
-    const categoryCount: Record<string, Number>[] = [];
-    productCategory.forEach((category, i) => {
-      categoryCount.push({
-        [category]: Math.round((categoriesCount[i] / productCount) * 100),
-      });
+    const categoriesCount = await getProductCategories({
+      productCategory,
+      productCount,
     });
 
     const count = {
@@ -185,10 +181,12 @@ export const adminDashboardStats = tryCatch(async (req, res, next) => {
         order: orderMonthsCount,
         revenue: orderMonthsRevenue,
       },
-      categoryCount,
+      categoriesCount,
       userGenderRatio,
       latestTransaction: modifiedLatestTransactions,
     };
+
+    myCache.set("admin-stats", JSON.stringify(stats));
   }
 
   return res.status(200).json({
@@ -197,6 +195,47 @@ export const adminDashboardStats = tryCatch(async (req, res, next) => {
   });
 });
 
-export const getPieCharts = tryCatch(async (req, res, next) => {});
+export const getPieCharts = tryCatch(async (req, res, next) => {
+  let chart;
+
+  if (myCache.has("admin-pie-chart"))
+    chart = JSON.parse(myCache.get("admin-pie-chart") as string);
+  else {
+    const [
+      ProcessingOrderCount,
+      shippedOrderCount,
+      deliveredOrderCount,
+      productCategory,
+      productCount,
+    ] = await Promise.all([
+      Order.countDocuments({ status: "Processing" }),
+      Order.countDocuments({ status: "Shipped" }),
+      Order.countDocuments({ status: "Delivered" }),
+      Product.distinct("category"),
+      Product.countDocuments(),
+    ]);
+
+    const orderFullFilmentsStatus = {
+      processing: ProcessingOrderCount,
+      shipped: shippedOrderCount,
+      delivered: deliveredOrderCount,
+    };
+
+    const categoriesCount = await getProductCategories({
+      productCategory,
+      productCount,
+    });
+
+    chart = {
+      orderFullFilmentsStatus,
+      categoriesCount,
+    };
+    return res.status(200).json({
+      success: true,
+      chart,
+    });
+  }
+});
+
 export const getBarCharts = tryCatch(async (req, res, next) => {});
 export const getLineCharts = tryCatch(async (req, res, next) => {});
