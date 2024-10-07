@@ -62,7 +62,7 @@ export const adminDashboardStats = tryCatch(async (req, res, next) => {
         $lte: thisMonth.end,
       },
     });
-    const sixMonthAgoOrderPromise = Order.find({
+    const lastsixMonthOrderPromise = Order.find({
       createdAt: {
         $gte: sixMonthsAgo,
         $lte: today,
@@ -76,7 +76,7 @@ export const adminDashboardStats = tryCatch(async (req, res, next) => {
       lastMonthOrders,
       lastMonthProducts,
       lastMonthUsers,
-      lastsixMonthAgoOrders,
+      lastsixMonthOrders,
       userCount,
       productCount,
       allOrders,
@@ -87,7 +87,7 @@ export const adminDashboardStats = tryCatch(async (req, res, next) => {
       lastMonthOrderPromise,
       lastMonthProductsPromise,
       lastMonthUserPromise,
-      sixMonthAgoOrderPromise,
+      lastsixMonthOrderPromise,
       User.countDocuments(),
       Product.countDocuments(),
       Order.find({}).select("total"),
@@ -130,12 +130,15 @@ export const adminDashboardStats = tryCatch(async (req, res, next) => {
     const orderMonthsCount = new Array(6).fill(0);
     const orderMonthsRevenue = new Array(6).fill(0);
 
-    lastsixMonthAgoOrders.forEach((order) => {
+    lastsixMonthOrders.forEach((order) => {
       const creationDate = order.createdAt;
       const monthsDiff = today.getMonth() - creationDate.getMonth();
+      console.log(monthsDiff);
 
       if (monthsDiff < 6) {
+        console.log(orderMonthsCount);
         orderMonthsCount[6 - monthsDiff - 1] += 1;
+        console.log(orderMonthsCount);
         orderMonthsRevenue[6 - monthsDiff - 1] += order.total;
       }
     });
