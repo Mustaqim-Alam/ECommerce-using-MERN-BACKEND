@@ -201,18 +201,36 @@ export const getPieCharts = tryCatch(async (req, res, next) => {
   if (myCache.has("admin-pie-chart"))
     chart = JSON.parse(myCache.get("admin-pie-chart") as string);
   else {
+    const allOrderPromise = Order.find({}).select([
+      "tax",
+      "total",
+      "subtotal",
+      "discount",
+      "shippingCharge",
+    ]);
+
     const [
       ProcessingOrderCount,
       shippedOrderCount,
       deliveredOrderCount,
       productCategory,
       productCount,
+      productOutOfStock,
+      allOrders,
+      usersDOB,
+      adminCount,
+      userCount,
     ] = await Promise.all([
       Order.countDocuments({ status: "Processing" }),
       Order.countDocuments({ status: "Shipped" }),
       Order.countDocuments({ status: "Delivered" }),
       Product.distinct("category"),
       Product.countDocuments(),
+      Product.countDocuments({ stock: 0 }),
+      allOrderPromise,
+      User.find({}).select("DOB"),
+      User.countDocuments({ role: "admin" }),
+      User.countDocuments({ role: "user" }),
     ]);
 
     const orderFullFilmentsStatus = {
@@ -226,10 +244,56 @@ export const getPieCharts = tryCatch(async (req, res, next) => {
       productCount,
     });
 
+    const stockAvailablity = {
+      inStock: productCount - productOutOfStock,
+      productOutOfStock,
+    };
+
+    const grossIncome = allOrders.reduce(
+      (prev, order) => prev + (order.total || 0),
+      0
+    );
+    const discount = allOrders.reduce(
+      (prev, order) => prev + (order.discount || 0),
+      0
+    );
+    const productCost = allOrders.reduce(
+      (prev, order) => prev + (order.shippingCharge || 0),
+      0
+    );
+    const brunt = allOrders.reduce((prev, order) => prev + (order.tax || 0), 0);
+    const marketingCost = Math.round(grossIncome * (30 / 100));
+    const netMargin =
+      grossIncome - discount - productCost - brunt - marketingCost;
+
+    const revenueDistibution = {
+      netMargin,
+      discount,
+      productCost,
+      brunt,
+      marketingCost,
+    };
+
+    const adminUSer = {
+      admin: adminCount,
+      user: userCount,
+    };
+
+    const userAgeGroup = {
+      teen: usersDOB.filter((user) => user.age < 20).length,
+      adult: usersDOB.filter((user) => user.age >= 20 && user.age > 40).length,
+      old: usersDOB.filter((user) => user.age >= 40).length,
+    };
+
     chart = {
       orderFullFilmentsStatus,
       categoriesCount,
+      stockAvailablity,
+      revenueDistibution,
+      userAgeGroup,
+      adminUSer,
     };
+
     return res.status(200).json({
       success: true,
       chart,
