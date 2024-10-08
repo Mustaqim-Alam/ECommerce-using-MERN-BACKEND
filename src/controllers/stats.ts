@@ -228,7 +228,7 @@ export const getPieCharts = tryCatch(async (req, res, next) => {
       Product.countDocuments(),
       Product.countDocuments({ stock: 0 }),
       allOrderPromise,
-      User.find({}).select("DOB"),
+      User.find({}).select(["dob"]),
       User.countDocuments({ role: "admin" }),
       User.countDocuments({ role: "user" }),
     ]);
@@ -279,9 +279,11 @@ export const getPieCharts = tryCatch(async (req, res, next) => {
       user: userCount,
     };
 
+    console.log(usersDOB.filter((user) => user.age >= 20 && user.age < 40));
+
     const userAgeGroup = {
       teen: usersDOB.filter((user) => user.age < 20).length,
-      adult: usersDOB.filter((user) => user.age >= 20 && user.age > 40).length,
+      adult: usersDOB.filter((user) => user.age >= 20 && user.age < 40).length,
       old: usersDOB.filter((user) => user.age >= 40).length,
     };
 

@@ -23,7 +23,7 @@ const schema = new mongoose.Schema({
         type: String,
         enum: ["admin", "user"],
         required: [true, "Please enter role"],
-        default: "user"
+        default: "user",
     },
     dob: {
         type: Date,
@@ -38,6 +38,8 @@ const schema = new mongoose.Schema({
     timestamps: true,
 });
 schema.virtual("age").get(function () {
+    if (!this.dob)
+        return null;
     const today = new Date();
     const dob = this.dob;
     let age = today.getFullYear() - dob.getFullYear();
