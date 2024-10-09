@@ -6,6 +6,8 @@ interface IProduct extends Document {
   price: number;
   stock: number;
   category: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const schema = new mongoose.Schema(

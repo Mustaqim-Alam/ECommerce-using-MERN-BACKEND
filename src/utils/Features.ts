@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Document, Types } from "mongoose";
 import { myCache } from "../app.js";
 import { Product } from "../Models/product.js";
 import { orderItemType, InvalidateCacheProps } from "../Types/types.js";
@@ -64,7 +64,12 @@ export const invalidCache = async ({
     myCache.del(orderKeys);
   }
   if (admin) {
-    const adminKeys: string[] = [];
+    myCache.del([
+      "admin-stats",
+      "admin-bar-charts",
+      "admin-pie-charts",
+      "admin-line-charts",
+    ]);
   }
 };
 
@@ -110,6 +115,12 @@ interface MyDocument extends Document {
   createdAt: Date;
   discount?: number;
   total?: number;
+  status?: "Processing" | "Shipped" | "Delivered";
+  user?: Types.ObjectId;
+  subTotal?: number;
+  tax?: number;
+  shippingCharge?: number;
+  orderItems?: any[];
 }
 type FuncProps = {
   length: number;
@@ -132,7 +143,7 @@ export const getChartData = ({
 
     if (monthDiff < length) {
       if (property) {
-        data[length - monthDiff - 1] += i[property]!;
+        data[length - monthDiff - 1] += property ? i[property]! || 0 : 1;
       } else {
         data[length - monthDiff - 1] += 1;
       }

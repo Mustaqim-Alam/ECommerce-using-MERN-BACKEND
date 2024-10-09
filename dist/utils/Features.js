@@ -55,7 +55,12 @@ export const invalidCache = (_a) => __awaiter(void 0, [_a], void 0, function* ({
         myCache.del(orderKeys);
     }
     if (admin) {
-        const adminKeys = [];
+        myCache.del([
+            "admin-stats",
+            "admin-bar-charts",
+            "admin-pie-charts",
+            "admin-line-charts",
+        ]);
     }
 });
 export const reduceStock = (orderItems) => __awaiter(void 0, void 0, void 0, function* () {
@@ -91,7 +96,7 @@ export const getChartData = ({ length, docArr, today, property, }) => {
         const monthDiff = (today.getMonth() - creationDate.getMonth() + 12) % 12;
         if (monthDiff < length) {
             if (property) {
-                data[length - monthDiff - 1] += i[property];
+                data[length - monthDiff - 1] += property ? i[property] || 0 : 1;
             }
             else {
                 data[length - monthDiff - 1] += 1;
