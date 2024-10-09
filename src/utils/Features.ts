@@ -115,12 +115,6 @@ interface MyDocument extends Document {
   createdAt: Date;
   discount?: number;
   total?: number;
-  status?: "Processing" | "Shipped" | "Delivered";
-  user?: Types.ObjectId;
-  subTotal?: number;
-  tax?: number;
-  shippingCharge?: number;
-  orderItems?: any[];
 }
 type FuncProps = {
   length: number;
