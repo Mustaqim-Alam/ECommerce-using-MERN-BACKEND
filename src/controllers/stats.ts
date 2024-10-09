@@ -5,6 +5,7 @@ import { Product } from "../Models/product.js";
 import { User } from "../Models/user.js";
 import {
   calculatePercentage,
+  getChartData,
   getProductCategories,
 } from "../Utils/features.js";
 
@@ -310,16 +311,47 @@ export const getBarCharts = tryCatch(async (req, res, next) => {
     const today = new Date();
     const sixMonthsAgo = new Date();
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
     const twelveMonthAgo = new Date();
-    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 12);
+    twelveMonthAgo.setMonth(twelveMonthAgo.getMonth() - 12);
 
-    
+    const twelveMonthOrderPromise = Order.find({
+      createdAt: {
+        $gte: twelveMonthAgo,
+        $lte: today,
+      },
+    }).select("createdAt");
+    const sixMonthProductPromise = Product.find({
+      createdAt: {
+        $gte: sixMonthsAgo,
+        $lte: today,
+      },
+    }).select("createdAt");
+    const sixMonthUserPromise = User.find({
+      createdAt: {
+        $gte: sixMonthsAgo,
+        $lte: today,
+      },
+    }).select("createdAt");
 
+    const [sixMonthOrders, sixMonthProducts, sixMonthUsers] = await Promise.all(
+      [twelveMonthOrderPromise, sixMonthProductPromise, sixMonthUserPromise]
+    );
 
+    const productCounts = getChartData({
+      length: 6,
+      docArr: sixMonthProducts,
+      today,
+    });
 
-    charts = {};
+    charts = { products: productCounts };
 
     myCache.set(key, JSON.stringify(charts));
   }
+
+  return res.status(200).json({
+    success: true,
+    charts,
+  });
 });
 export const getLineCharts = tryCatch(async (req, res, next) => {});
