@@ -11,8 +11,8 @@ import {
 export const adminDashboardStats = tryCatch(async (req, res, next) => {
   let stats;
 
-  if (myCache.has("admin-stats"))
-    stats = JSON.parse(myCache.get("admin-stats") as string);
+  const key = "admin-stats";
+  if (myCache.has(key)) stats = JSON.parse(myCache.get(key) as string);
   else {
     const today = new Date();
     const sixMonthsAgo = new Date();
@@ -138,13 +138,11 @@ export const adminDashboardStats = tryCatch(async (req, res, next) => {
 
     lastsixMonthOrders.forEach((order) => {
       const creationDate = order.createdAt;
-      const monthsDiff = today.getMonth() - creationDate.getMonth();
-      console.log(monthsDiff);
+      const monthsDiff = (today.getMonth() - creationDate.getMonth() + 12) % 12;
 
       if (monthsDiff < 6) {
-        console.log(orderMonthsCount);
         orderMonthsCount[6 - monthsDiff - 1] += 1;
-        console.log(orderMonthsCount);
+
         orderMonthsRevenue[6 - monthsDiff - 1] += order.total;
       }
     });
@@ -186,7 +184,7 @@ export const adminDashboardStats = tryCatch(async (req, res, next) => {
       latestTransaction: modifiedLatestTransactions,
     };
 
-    myCache.set("admin-stats", JSON.stringify(stats));
+    myCache.set(key, JSON.stringify(stats));
   }
 
   return res.status(200).json({
@@ -198,8 +196,8 @@ export const adminDashboardStats = tryCatch(async (req, res, next) => {
 export const getPieCharts = tryCatch(async (req, res, next) => {
   let chart;
 
-  if (myCache.has("admin-pie-chart"))
-    chart = JSON.parse(myCache.get("admin-pie-chart") as string);
+  const key = "admin-pie-chart";
+  if (myCache.has(key)) chart = JSON.parse(myCache.get(key) as string);
   else {
     const allOrderPromise = Order.find({}).select([
       "tax",
@@ -279,8 +277,6 @@ export const getPieCharts = tryCatch(async (req, res, next) => {
       user: userCount,
     };
 
-    console.log(usersDOB.filter((user) => user.age >= 20 && user.age < 40));
-
     const userAgeGroup = {
       teen: usersDOB.filter((user) => user.age < 20).length,
       adult: usersDOB.filter((user) => user.age >= 20 && user.age < 40).length,
@@ -296,12 +292,34 @@ export const getPieCharts = tryCatch(async (req, res, next) => {
       adminUSer,
     };
 
-    return res.status(200).json({
-      success: true,
-      chart,
-    });
+    myCache.set(key, JSON.stringify(chart));
   }
+  return res.status(200).json({
+    success: true,
+    chart,
+  });
 });
 
-export const getBarCharts = tryCatch(async (req, res, next) => {});
+export const getBarCharts = tryCatch(async (req, res, next) => {
+  let charts;
+
+  const key = "admin=bar-charts";
+
+  if (myCache.has(key)) charts = JSON.parse(myCache.get(key) as string);
+  else {
+    const today = new Date();
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+    const twelveMonthAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 12);
+
+    
+
+
+
+    charts = {};
+
+    myCache.set(key, JSON.stringify(charts));
+  }
+});
 export const getLineCharts = tryCatch(async (req, res, next) => {});
