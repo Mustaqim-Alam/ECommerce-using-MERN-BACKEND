@@ -343,8 +343,22 @@ export const getBarCharts = tryCatch(async (req, res, next) => {
       docArr: sixMonthProducts,
       today,
     });
+    const userCounts = getChartData({
+      length: 6,
+      docArr: sixMonthUsers,
+      today,
+    });
+    const orderCounts = getChartData({
+      length: 6,
+      docArr: sixMonthOrders,
+      today,
+    });
 
-    charts = { products: productCounts };
+    charts = {
+      products: productCounts,
+      users: userCounts,
+      orderCounts: orderCounts,
+    };
 
     myCache.set(key, JSON.stringify(charts));
   }
