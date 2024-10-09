@@ -315,24 +315,16 @@ export const getBarCharts = tryCatch(async (req, res, next) => {
     const twelveMonthAgo = new Date();
     twelveMonthAgo.setMonth(twelveMonthAgo.getMonth() - 12);
 
-    const twelveMonthOrderPromise = Order.find({
+    const baseQuery = {
       createdAt: {
         $gte: twelveMonthAgo,
         $lte: today,
       },
-    }).select("createdAt");
-    const sixMonthProductPromise = Product.find({
-      createdAt: {
-        $gte: sixMonthsAgo,
-        $lte: today,
-      },
-    }).select("createdAt");
-    const sixMonthUserPromise = User.find({
-      createdAt: {
-        $gte: sixMonthsAgo,
-        $lte: today,
-      },
-    }).select("createdAt");
+    };
+
+    const twelveMonthOrderPromise = Order.find(baseQuery).select("createdAt");
+    const sixMonthProductPromise = Product.find(baseQuery).select("createdAt");
+    const sixMonthUserPromise = User.find(baseQuery).select("createdAt");
 
     const [sixMonthOrders, sixMonthProducts, sixMonthUsers] = await Promise.all(
       [twelveMonthOrderPromise, sixMonthProductPromise, sixMonthUserPromise]
@@ -349,14 +341,14 @@ export const getBarCharts = tryCatch(async (req, res, next) => {
       today,
     });
     const orderCounts = getChartData({
-      length: 6,
+      length: 12,
       docArr: sixMonthOrders,
       today,
     });
 
     charts = {
-      products: productCounts,
       users: userCounts,
+      products: productCounts,
       orderCounts: orderCounts,
     };
 
@@ -368,4 +360,59 @@ export const getBarCharts = tryCatch(async (req, res, next) => {
     charts,
   });
 });
-export const getLineCharts = tryCatch(async (req, res, next) => {});
+export const getLineCharts = tryCatch(async (req, res, next) => {
+  let charts;
+
+  const key = "admin-line-charts";
+
+  if (myCache.has(key)) charts = JSON.parse(myCache.get(key) as string);
+  else {
+    const today = new Date();
+
+    const twelveMonthAgo = new Date();
+    twelveMonthAgo.setMonth(twelveMonthAgo.getMonth() - 12);
+
+    const baseQuery = {
+      createdAt: {
+        $gte: twelveMonthAgo,
+        $lte: today,
+      },
+    };
+
+    const [twelveMonthOrders, twelveMonthProducts, twelveMonthUsers] =
+      await Promise.all([
+        Order.find(baseQuery).select("createdAt"),
+        Product.find(baseQuery).select("createdAt"),
+        User.find(baseQuery).select("createdAt"),
+      ]);
+
+    const productCounts = getChartData({
+      length: 12,
+      docArr: twelveMonthProducts,
+      today,
+    });
+    const userCounts = getChartData({
+      length: 12,
+      docArr: twelveMonthUsers,
+      today,
+    });
+    const orderCounts = getChartData({
+      length: 12,
+      docArr: twelveMonthOrders,
+      today,
+    });
+
+    charts = {
+      users: userCounts,
+      products: productCounts,
+      orderCounts: orderCounts,
+    };
+
+    myCache.set(key, JSON.stringify(charts));
+  }
+
+  return res.status(200).json({
+    success: true,
+    charts,
+  });
+});

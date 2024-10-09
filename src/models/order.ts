@@ -16,8 +16,7 @@ const schema = new mongoose.Schema(
         type: String,
         required: true,
       },
-      country: {
-        // Corrected spelling from 'Cuntry'
+      country: {658259lj 
         type: String,
         required: true,
       },
