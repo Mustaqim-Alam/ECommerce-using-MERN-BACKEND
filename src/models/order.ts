@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 const schema = new mongoose.Schema(
   {
     shippingInfo: {
-      // Changed from 'OrderInfo'
       address: {
         type: String,
         required: true,
@@ -16,7 +15,7 @@ const schema = new mongoose.Schema(
         type: String,
         required: true,
       },
-      country: {658259lj 
+      country: {
         type: String,
         required: true,
       },

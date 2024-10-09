@@ -405,7 +405,8 @@ export const getLineCharts = tryCatch(async (req, res, next) => {
     charts = {
       users: userCounts,
       products: productCounts,
-      orderCounts: orderCounts,
+      discount: [3354],
+      revenue: [543453],
     };
 
     myCache.set(key, JSON.stringify(charts));
