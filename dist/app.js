@@ -4,6 +4,8 @@ import { connectdb } from "./Utils/features.js";
 import express from "express";
 import morgan from "morgan";
 import NodeCache from "node-cache";
+import Stripe from "stripe";
+//Routes
 import orderRoutes from "./Routes/orders.js";
 import productRoute from "./Routes/products.js";
 import userRoute from "./Routes/user.js";
@@ -17,10 +19,12 @@ config({
 const port = process.env.PORT || 9900;
 //Database connection
 const mongo_uri = process.env.MONGODB_URI || "mongodb://localhost:27017";
+const stripe_key = process.env.STRIPE_KEY || "";
 connectdb(mongo_uri);
 //Middleware for JSON Parsing
 app.use(express.json());
 app.use(morgan("dev"));
+export const stripe = new Stripe(stripe_key);
 // Using nodeCache for storing copies of data in a temporary storage location
 export const myCache = new NodeCache();
 app.get("/", (req, res) => {

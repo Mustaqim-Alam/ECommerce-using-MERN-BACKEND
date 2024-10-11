@@ -1,7 +1,10 @@
 import express from "express";
-import { allCoupon, applyDiscount, deleteCoupon, newCoupon } from "../Controllers/payment.js";
+import { allCoupon, applyDiscount, cretePaymentIntent, deleteCoupon, newCoupon } from "../Controllers/payment.js";
 
 const app = express();
+
+// app/v1/payment/create
+app.post("/create", cretePaymentIntent);
 
 // app/v1/payment/coupon/new
 app.post("/coupon/new", newCoupon);
