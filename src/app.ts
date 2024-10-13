@@ -15,15 +15,14 @@ import adminDashboardRoute from "./Routes/stats.js";
 
 const app = express();
 
-config({
-  path: "./.env",
-});
+config();
+
 
 //Assigning port for server
 const port = process.env.PORT || 9900;
 
 //Database connection
-const mongo_uri = process.env.MONGODB_URI || "mongodb://localhost:27017";
+const mongo_uri = process.env.MONGODB_URI || "";
 const stripe_key = process.env.STRIPE_KEY || "";
 connectdb(mongo_uri);
 
